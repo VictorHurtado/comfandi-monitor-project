@@ -1,25 +1,5 @@
-import NextAuth, { type NextAuthOptions } from "next-auth";
-import KeycloakProvider from "next-auth/providers/keycloak";
-import { KeycloakService } from "@/infrastructure/services/KeycloakService";
-
-const keycloakService = new KeycloakService();
-
-const providers = keycloakService.isConfigured()
-  ? [
-      KeycloakProvider({
-        issuer: keycloakService.getIssuer(),
-        clientId: keycloakService.getClientId(),
-        clientSecret: keycloakService.getClientSecret()
-      })
-    ]
-  : [];
-
-export const authOptions: NextAuthOptions = {
-  providers,
-  session: {
-    strategy: "jwt"
-  }
-};
+import NextAuth from "next-auth";
+import { authOptions } from "@/infrastructure/config/auth-options";
 
 const handler = NextAuth(authOptions);
 
