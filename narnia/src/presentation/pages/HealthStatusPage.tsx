@@ -22,9 +22,9 @@ export async function HealthStatusPage() {
 
     return (
       <main className="flex min-h-screen items-center justify-center px-6 py-10">
-        <section className="w-full max-w-3xl rounded-xl border border-brand-200 bg-white p-6 text-brand-900">
-          <h1 className="mb-2 text-2xl font-semibold">Narnia technical status</h1>
-          <p className="text-sm text-brand-700">{message}</p>
+        <section className="ui-card w-full max-w-3xl p-6 text-brand-900">
+          <h1 className="mb-2 text-h2 text-brand-800">Narnia technical status</h1>
+          <p className="text-body text-brand-700">{message}</p>
         </section>
       </main>
     );
