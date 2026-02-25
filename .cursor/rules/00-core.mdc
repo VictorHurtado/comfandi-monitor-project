@@ -29,8 +29,8 @@ alwaysApply: true
 | Librerias no aprobadas | Sin autorizacion |
 | Entregar sin tests | Cobertura >= 80% obligatoria |
 | Entregar sin ejecutar `npx jest --coverage` | Verificar ANTES de commit |
-| **Entregar sin validar quality gate del PR** | **Usar curl a API de SonarCloud con `pullRequest=<PR_NUMBER>`. NO local, NO rama** |
-| **Cerrar con sonar local o de rama** | **El cierre es SOLO con análisis del PR. Evidencias: PR URL + status=OK + new_coverage>=80** |
+| **Entregar sin validar quality gate del PR (cuando SonarCloud SI esta configurado)** | **Usar curl a API de SonarCloud con `pullRequest=<PR_NUMBER>`. NO local, NO rama** |
+| **Cerrar con sonar local o de rama** | **Si SonarCloud esta disponible, el cierre es SOLO con análisis del PR. Evidencias: PR URL + status=OK + new_coverage>=80** |
 | **Entregar sin PR** | **Siempre debe existir PR a development y release. Ver skill `06-pr-process`** |
 | **Entregar sin commit + push** | **El codigo DEBE estar en el remoto** |
 | **Decir que se ejecutó algo sin haberlo hecho** | **EJECUTAR los comandos realmente** |
@@ -38,7 +38,7 @@ alwaysApply: true
 | **Hacer push antes de que F1-F2 pasen** | **Tests (>= 80%) y build DEBEN pasar ANTES de push** |
 | **Coverage < 80% y no agregar tests** | **ESCRIBIR MÁS TESTS hasta superar 80%. No rendirse** |
 | **No corregir issues de Sonar post-PR** | **Consultar issues/search OBLIGATORIO. Corregir TODOS (excepto INFO). Repetir hasta 0 issues** |
-| **Cerrar sin evidencias** | **PR URL + status=OK + new_coverage>=80 son OBLIGATORIOS** |
+| **Cerrar sin evidencias** | **Siempre: F1/F2 + commit/push + PR URL (si aplica). Si SonarCloud esta configurado: status=OK + new_coverage>=80** |
 
 ## Error 403 / conectividad
 
