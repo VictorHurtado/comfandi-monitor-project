@@ -2,6 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-brand-50 text-brand-900 font-outfit antialiased;
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html,
+  body {
+    min-height: 100%;
+  }
+
+  body {
+    @apply bg-brand-canvas text-brand-900 font-outfit text-body antialiased;
+  }
+}
+
+@layer components {
+  .ui-card {
+    @apply rounded-card border border-brand-border bg-brand-surface shadow-card;
+  }
+
+  .ui-control {
+    @apply rounded-input border border-brand-border bg-brand-surface text-brand-900 shadow-sm transition-colors duration-200;
+    @apply placeholder:text-brand-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-focus focus-visible:ring-offset-2 focus-visible:ring-offset-brand-canvas;
+    @apply disabled:cursor-not-allowed disabled:border-brand-200 disabled:bg-brand-100 disabled:text-brand-muted;
+  }
+
+  .ui-button-primary {
+    @apply inline-flex items-center justify-center rounded-button bg-brand-500 px-4 py-2 text-button text-brand-surface transition-colors duration-200;
+    @apply hover:bg-brand-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-focus focus-visible:ring-offset-2 focus-visible:ring-offset-brand-canvas;
+    @apply disabled:cursor-not-allowed disabled:bg-brand-disabled;
+  }
 }
