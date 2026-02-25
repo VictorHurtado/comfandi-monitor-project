@@ -4,6 +4,7 @@ import { InternalServerError } from "@/utils/errors/domain-errors";
 describe("ExternalApiService", () => {
   it("returns integration health from http client", async () => {
     const http = {
+      defaults: {},
       get: jest.fn().mockResolvedValue({
         data: {
           provider: "sonar",
@@ -23,6 +24,7 @@ describe("ExternalApiService", () => {
 
   it("maps technical errors to InternalServerError", async () => {
     const http = {
+      defaults: {},
       get: jest.fn().mockRejectedValue(new Error("timeout"))
     };
 
@@ -31,5 +33,21 @@ describe("ExternalApiService", () => {
     await expect(service.getIntegrationHealth("github")).rejects.toBeInstanceOf(
       InternalServerError
     );
+  });
+
+  it("avoids recursive calls when baseURL points to local BFF", async () => {
+    const http = {
+      defaults: {
+        baseURL: "http://localhost:3000/api/v1"
+      },
+      get: jest.fn()
+    };
+
+    const service = new ExternalApiService(http as never);
+    const result = await service.getIntegrationHealth("sentry");
+
+    expect(http.get).not.toHaveBeenCalled();
+    expect(result.status).toBe("unknown");
+    expect(result.message).toContain("not configured");
   });
 });
