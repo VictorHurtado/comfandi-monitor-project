@@ -1,0 +1,15 @@
+---
+description: Limites de la capa Domain - codigo puro, sin frameworks, sin efectos secundarios
+globs:
+  - "**/src/domain/**"
+---
+
+# Domain Layer (Clean Architecture — frontend)
+
+> **Aplica a**: proyectos frontend (Next.js/React). En NestJS, la logica de negocio vive en Services dentro de cada modulo (ver `nestjs/SKILL.mdc`).
+
+**PUEDE**: modelos, interfaces de repositorio, use cases, errores de dominio, schemas Yup.
+
+**NO PUEDE**: importar React/Redux/Axios/NestJS, acceder a window/localStorage/fetch, mutar estado global, conocer infraestructura.
+
+**Reglas**: codigo puro, sin efectos secundarios, totalmente testeable, un use case por archivo, un repositorio por entidad.

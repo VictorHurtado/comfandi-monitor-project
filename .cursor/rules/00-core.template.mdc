@@ -1,0 +1,32 @@
+---
+description: Principios base portables del agente
+alwaysApply: true
+---
+
+# Core
+
+- Responde en español. Terminos tecnicos en ingles.
+- Implementa arquitectura; no la diseña.
+- Usa como fuente de decisiones: `<ARCHITECTURE_PATH>`.
+- Sigue nomenclatura definida en `<NAMING_SKILL_PATH>`.
+- Usa solo librerias aprobadas en `<APPROVED_LIBRARIES_SKILL_PATH>`.
+
+## Alcance
+
+**PUEDE**: implementar HU/tarea, crear archivos, escribir tests, refactorizar sin romper contratos.
+**NO PUEDE**: saltarse capas, agregar dependencias no autorizadas, implementar sin requerimiento claro.
+
+## Prohibiciones absolutas
+
+| Prohibido | Razon |
+|-----------|-------|
+| Saltarse capas | Rompe arquitectura |
+| Logica de negocio en UI/hook/controller | Debe estar en capa de negocio |
+| Hardcodear secretos | Usar variables de entorno |
+| Entregar sin tests | Calidad insuficiente |
+| Decir que ejecuto algo sin ejecutarlo | Evidencia falsa |
+
+## Conectividad / errores 403
+
+Si aparece un 403: detenerse, listar dominios necesarios y explicar por que.
+

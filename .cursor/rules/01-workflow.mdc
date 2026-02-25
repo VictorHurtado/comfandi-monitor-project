@@ -1,0 +1,45 @@
+---
+description: Flujo de trabajo obligatorio - lectura previa, orden de capas, definicion de done
+alwaysApply: true
+---
+
+# Workflow
+
+## Antes de codear
+
+1. Leer `docs/close/-01-product-vision.md` y `docs/close/architecture.md`.
+2. Leer la HU asignada. Si no es clara: **DETENERSE Y PREGUNTAR**.
+3. Identificar el proyecto del monorepo (ver `skill-project-map`). Si no hay match: **PREGUNTAR**.
+4. Identificar capas afectadas, archivos a crear/modificar, contratos existentes.
+
+## Orden de implementacion
+
+1. **Domain** → modelos, interfaces, use cases
+2. **Infrastructure** → repositorios, servicios
+3. **Presentation** → componentes, hooks
+4. **Tests** → **OBLIGATORIO** (ver `skill-testing`)
+5. **Swagger** → si se crean/modifican endpoints
+
+## Gates (BLOQUEANTE)
+
+| Gate | Comando | Umbral | Si falla |
+|------|---------|--------|----------|
+| F1 - Tests | `npx jest --coverage` | >= 80% | Escribir más tests |
+| F2 - Build | `npm run build` / `yarn build` | Sin errores | Corregir antes de push |
+
+> **F1 y F2 DEBEN pasar ANTES de push.** Coverage < 80% = escribir más tests, no detenerse.
+
+## PR y SonarCloud
+
+- Si el skill `06-pr-process` esta activo: el agente crea **DOS PRs** con `gh pr create` (uno a `development`, otro a `release`).
+- Si el skill NO esta activo: solo hacer commit + push. Preguntar al usuario el número del PR.
+- Validar SonarCloud **solo con `pullRequest=<PR_NUMBER>`** (NO local, NO rama).
+- Ver detalle completo en `06-pr-process.mdc`.
+
+## Definicion de done
+
+- [ ] F1: tests >= 80% ejecutados
+- [ ] F2: build OK
+- [ ] TypeScript sin errores
+- [ ] Quality gate del PR: `status=OK`, `new_coverage >= 80`, 0 issues (excepto INFO)
+- [ ] Evidencias: PR URL + status=OK + new_coverage>=80

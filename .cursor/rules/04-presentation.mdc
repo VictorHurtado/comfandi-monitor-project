@@ -1,0 +1,16 @@
+---
+description: Limites de la capa Presentation - solo UI, sin logica de negocio, sin servicios directos
+globs:
+  - "**/src/presentation/**"
+  - "**/src/app/**"
+---
+
+# Presentation Layer (Clean Architecture — frontend)
+
+> **Aplica a**: proyectos frontend (Next.js/React). NO aplica a NestJS — NestJS usa Controllers (ver `nestjs/SKILL.mdc`).
+
+**PUEDE**: componentes UI, hooks, Redux slices, routing, pages (Next.js App Router).
+
+**NO PUEDE**: logica de negocio, acceso directo a APIs/servicios, instanciar repositorios con `new`, textos hardcodeados sin justificacion, colores hex inline.
+
+**Reglas**: consumir solo Use Cases, manejar loading/error/empty states, UI reactiva. Tokens `brand-*` de `tailwind.config.ts`. Tipografia `font-outfit`, tamanos `text-h1`..`text-button`. Un componente por archivo, un slice por feature.

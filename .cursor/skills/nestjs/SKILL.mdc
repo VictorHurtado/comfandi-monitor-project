@@ -1,0 +1,57 @@
+---
+description: Estructura y patrones para proyectos backend NestJS
+globs:
+  - "**/src/modules/**"
+  - "**/src/app.module.ts"
+---
+
+# Skill: Estructura NestJS
+
+> Solo backend NestJS. NO usar Clean Architecture frontend aqui.
+
+## Estructura por modulo
+
+```
+src/modules/<modulo>/
+├── <modulo>.module.ts       # @Module
+├── <modulo>.controller.ts   # Endpoints
+├── <modulo>.service.ts      # Logica de negocio
+├── dto/                     # class-validator DTOs
+└── tests/                   # .spec.ts
+```
+
+## Patron basico
+
+```typescript
+// Module
+@Module({ controllers: [DebugController], providers: [DebugService] })
+export class DebugModule {}
+
+// Controller — delgado, solo recibe y delega
+@Controller('debug')
+export class DebugController {
+  constructor(private readonly service: DebugService) {}
+  @Get() getHello() { return this.service.getGreeting(); }
+}
+
+// Service — logica aqui
+@Injectable()
+export class DebugService {
+  getGreeting() { return { message: 'Hello', timestamp: new Date().toISOString() }; }
+}
+```
+
+## Reglas clave
+
+| Regla | Descripcion |
+|-------|-------------|
+| DI nativo | `@Injectable()` de NestJS, **NO** InversifyJS |
+| Controllers delgados | Solo reciben y delegan a Service |
+| DTOs | Validar con class-validator |
+| Tests en `tests/` | `.spec.ts`, NO `__tests__/` |
+| Un modulo por feature | No mezclar features |
+| Registrar en AppModule | `imports: [NuevoModule]` |
+
+## Prohibido en NestJS
+
+Carpetas `domain/`/`infrastructure/`/`presentation/`, InversifyJS, Redux, hooks.

@@ -1,0 +1,46 @@
+---
+description: Proceso portable de PR con validacion de calidad
+alwaysApply: false
+---
+
+# PR process
+
+Activar esta regla solo cuando el usuario pida explicitamente crear PRs.
+
+## Naming sugerido
+
+`[<WORK_ITEM_ID>] [Feature|Fix|Refactor|Hotfix] - <Descripcion breve> <TARGET>`
+
+## Flujo
+
+Desde la rama de trabajo actual, crear PRs a:
+- `<PR_BASE_MAIN>` (integracion)
+- `<PR_BASE_STABLE>` (estable)
+
+## Prerrequisito obligatorio
+
+Antes de crear PRs deben pasar:
+- F1: tests (`npx jest --coverage`, minimo esperado)
+- F2: build (sin errores)
+
+## Creacion de PRs
+
+```bash
+gh pr create --title "<TITLE_MAIN>" --body-file <PR_DOC_PATH> --base <PR_BASE_MAIN> --head <CURRENT_BRANCH>
+gh pr create --title "<TITLE_STABLE>" --body-file <PR_DOC_PATH> --base <PR_BASE_STABLE> --head <CURRENT_BRANCH>
+```
+
+Si `gh` no esta autenticado: detenerse y pedir `gh auth login`.
+
+## SonarCloud por PR (obligatorio para cierre)
+
+```bash
+curl -u "$SONAR_TOKEN:" \
+  "https://sonarcloud.io/api/qualitygates/project_status?projectKey=<SONAR_PROJECT_KEY>&pullRequest=<PR_NUMBER>"
+```
+
+Criterio de cierre:
+- `status=OK`
+- `new_coverage >= 80`
+- issues abiertos: 0 (excepto INFO)
+

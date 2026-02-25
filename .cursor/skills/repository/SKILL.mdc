@@ -1,0 +1,83 @@
+---
+description: Patron de repositorio - contrato (Domain), implementacion frontend (Axios+Inversify) y backend (Prisma+NestJS)
+globs:
+  - "**/src/domain/repositories/**"
+  - "**/src/infrastructure/repositories/**"
+  - "**/src/modules/**"
+---
+
+# Skill: Repositorio
+
+## 1. Contrato (Domain — solo frontend)
+
+Ruta: `src/domain/repositories/I<Entidad>Repository.ts`
+
+```typescript
+import { Product } from '../models/Product';
+
+export interface FindAllParams { categoryId?: string; limit?: number; }
+
+export interface IProductRepository {
+  findAll(params: FindAllParams): Promise<Product[]>;
+  findById(id: string): Promise<Product | null>;
+}
+```
+
+**Reglas**: interfaces pequeñas, solo tipos de dominio, un repo por entidad.
+
+## 2. Frontend (Infrastructure — Axios + InversifyJS)
+
+Ruta: `src/infrastructure/repositories/<Entidad>Repository.ts`
+
+```typescript
+@injectable()
+export class ProductRepository implements IProductRepository {
+  constructor(@inject('AxiosInstance') private readonly http: AxiosInstance) {}
+
+  private mapToDomain(dto: ProductDto): Product {
+    return { id: dto.id, name: dto.name, price: dto.price };
+  }
+
+  async findAll(params: FindAllParams): Promise<Product[]> {
+    const response = await this.http.get<{ products: ProductDto[] }>('/products', { params });
+    return response.data.products.map(this.mapToDomain);
+  }
+}
+```
+
+**Reglas**: `implements I<Entidad>Repository`, DTOs internos, mapeo explícito DTO→dominio, `@injectable()`.
+
+## 3. Backend (NestJS — Prisma)
+
+Vive dentro del módulo. Para módulos simples, acceso a BD directo en el Service:
+
+```typescript
+@Injectable()
+export class ProductService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async findAll() { return this.prisma.product.findMany(); }
+}
+```
+
+Para módulos complejos, separar en Repository + Service:
+
+```typescript
+@Injectable()
+export class ProductRepository {
+  constructor(private readonly prisma: PrismaService) {}
+  async findById(id: string) { return this.prisma.product.findUnique({ where: { id } }); }
+}
+
+@Injectable()
+export class ProductService {
+  constructor(private readonly repo: ProductRepository) {}
+  async findById(id: string) {
+    const product = await this.repo.findById(id);
+    if (!product) throw new NotFoundException(`Product ${id} not found`);
+    return product;
+  }
+}
+```
+
+**Reglas**: `@Injectable()` (NO InversifyJS), no exponer tipos Prisma fuera del módulo.

@@ -1,0 +1,53 @@
+---
+description: Contenedor IoC con InversifyJS (solo frontend)
+globs:
+  - "**/src/infrastructure/ioc/**"
+---
+
+# Skill: Contenedor IoC (InversifyJS)
+
+> Solo frontend (Next.js/React). En NestJS usar DI nativo.
+
+## Estructura
+
+```
+src/infrastructure/ioc/
+├── container.ts               # load modules
+├── index.ts                   # re-exports
+├── repositories/              # .types.ts + .module.ts
+├── services/                  # .types.ts + .module.ts
+└── usecases/                  # .types.ts + .module.ts
+```
+
+## Patron
+
+```typescript
+// Types → Symbols
+export const REPOSITORY_TYPES = { IProductRepository: Symbol.for('IProductRepository') };
+
+// Module → Bindings
+export const repositoriesModule = new ContainerModule((bind) => {
+  bind<IProductRepository>(REPOSITORY_TYPES.IProductRepository).to(ProductRepository).inSingletonScope();
+});
+
+// UseCases → toDynamicValue para inyectar repos
+export const usecasesModule = new ContainerModule((bind) => {
+  bind(USECASE_TYPES.GetProductsUseCase).toDynamicValue((ctx) => {
+    const repo = ctx.container.get<IProductRepository>(REPOSITORY_TYPES.IProductRepository);
+    return new GetProductsUseCase(repo);
+  });
+});
+
+// Container → cargar en orden
+const container = new Container();
+container.load(servicesModule, repositoriesModule, usecasesModule);
+
+// Uso
+const useCase = container.get<GetProductsUseCase>(USECASE_TYPES.GetProductsUseCase);
+```
+
+## Reglas
+
+- Orden: Services → Repositories → UseCases
+- `Symbol.for()` para types, `inSingletonScope()` para repos, `toDynamicValue()` para use cases
+- NO instanciar con `new` en Presentation

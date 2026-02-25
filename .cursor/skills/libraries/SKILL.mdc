@@ -1,0 +1,36 @@
+---
+description: Librerias aprobadas y prohibidas para frontend y backend
+globs:
+  - package.json
+---
+
+# Skill: Librerias permitidas
+
+## Frontend
+
+| Categoria | Librerias |
+|-----------|-----------|
+| Formularios | Formik, Yup |
+| Estado | Redux Toolkit, Redux Persist |
+| HTTP | Axios |
+| Estilos | Tailwind CSS, NativeWind |
+| Fechas | Day.js, date-fns |
+| Auth | NextAuth.js |
+| IoC | InversifyJS |
+| Utilidades | lodash, classnames |
+
+## Backend
+
+| Categoria | Librerias |
+|-----------|-----------|
+| Framework | NestJS |
+| ORM | Prisma |
+| Validacion | class-validator, class-transformer |
+| HTTP | Axios |
+| Auth | jwt-decode |
+
+## Prohibidas
+
+moment.js (deprecado), Material-UI/Chakra (solo Tailwind).
+
+**No introducir dependencias nuevas sin autorizacion.**

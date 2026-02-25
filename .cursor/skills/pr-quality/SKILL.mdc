@@ -1,0 +1,91 @@
+---
+description: Proceso de PR, quality gates y validacion SonarCloud del PR
+alwaysApply: false
+---
+
+# Skill: PR y Quality Gates
+
+## Flujo de ramas
+
+```
+release → feature/<ID-HU> → PR a development
+```
+
+- Feature nace de `release`, PR va a `development`
+- La feature branch **NUNCA** recibe merge de development
+- Conflictos: crear `sacrifice/feature/<ID-HU>` desde la feature, mergear development ahí
+
+## Naming del PR
+
+```
+[<ID-HU>] [Feature|Fix|Refactor] - Descripcion breve DEVELOPMENT
+```
+
+## Prerrequisitos para push
+
+| Gate | Debe pasar |
+|------|------------|
+| F1: `npx jest --coverage` | >= 80% |
+| F2: `npm run build` | Sin errores |
+
+> NO hacer push si F1 o F2 fallan.
+
+## Creacion del PR
+
+- El agente **NO crea PRs** (NO usar `gh pr create`).
+- Cursor crea el PR automáticamente tras `git push`.
+- Después del push, preguntar: _"¿Ya se creó el PR? Dame el número para validar SonarCloud."_
+
+## SonarCloud del PR (F6)
+
+Constantes: `PROJECT_KEY=ComfandiTD_comfandi-portal-polizas-salud`
+
+```bash
+# 1. Quality gate del PR
+curl -u "$SONAR_TOKEN:" \
+  "https://sonarcloud.io/api/qualitygates/project_status?projectKey=$PROJECT_KEY&pullRequest=$PR_NUMBER"
+
+# 2. Si new_coverage < 80, identificar archivos:
+curl -u "$SONAR_TOKEN:" \
+  "https://sonarcloud.io/api/measures/component_tree?component=$PROJECT_KEY&pullRequest=$PR_NUMBER&metricKeys=new_coverage,coverage,lines_to_cover,uncovered_lines&qualifiers=FIL"
+
+# 3. OBLIGATORIO — Issues abiertos:
+curl -u "$SONAR_TOKEN:" \
+  "https://sonarcloud.io/api/issues/search?projectKeys=$PROJECT_KEY&pullRequest=$PR_NUMBER&resolved=false&ps=100"
+```
+
+### Ciclo de correccion
+
+1. Si `status != OK` o `new_coverage < 80`: escribir tests, corregir, push
+2. Si hay issues (BLOCKER/CRITICAL/MAJOR/MINOR): corregir todos, push
+3. Esperar nuevo análisis (~2-3 min), preguntar al usuario, repetir
+4. Max 3 ciclos
+
+### Severidad de issues
+
+| Severidad | Accion |
+|-----------|--------|
+| BLOCKER, CRITICAL, MAJOR, MINOR | **Corregir obligatorio** |
+| INFO | Se puede ignorar |
+
+## Evidencias obligatorias
+
+La tarea NO se cierra sin: **PR URL + status=OK + new_coverage>=80 + 0 issues (excepto INFO)**.
+
+## Prettier
+
+```json
+{ "trailingComma": "all", "tabWidth": 2, "semi": true, "singleQuote": true, "arrowParens": "always", "printWidth": 100, "bracketSpacing": true, "endOfLine": "auto" }
+```
+
+## Checklist de entrega
+
+- [ ] Arquitectura respetada
+- [ ] Tests >= 80%
+- [ ] Build OK
+- [ ] TypeScript sin errores
+- [ ] Quality gate PR: status=OK
+- [ ] 0 issues Sonar (excepto INFO)
+- [ ] Evidencias presentadas
+- [ ] Max 13 archivos por PR
+- [ ] Una sola HU por PR

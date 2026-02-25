@@ -1,0 +1,21 @@
+---
+description: Integracion con Jira para sincronizar estados de issues
+alwaysApply: false
+---
+
+# Skill: Jira
+
+Solo aplica si el usuario proporciona un link o key (ej: `PSA-11`).
+
+## Reglas
+
+- Usar `EMAIL_API_JIRA` y `TOKEN_API_JIRA` (Basic Auth).
+- **Prohibido** exponer tokens en logs o archivos.
+- Sin key clara → **NO tocar Jira**.
+- Error 401/403/404 → reportar y continuar.
+
+## Flujo
+
+1. **Verificar**: GET `/rest/api/3/issue/<KEY>?fields=status`
+2. **Al iniciar**: transicionar a "En curso"
+3. **Al finalizar**: transicionar a "Para revisar" > "Listo" > "Finalizada"

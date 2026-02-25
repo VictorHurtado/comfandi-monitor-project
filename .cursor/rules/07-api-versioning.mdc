@@ -1,0 +1,182 @@
+---
+description: Estrategia de versionado de API - URI Path Versioning entre Hermes (frontend) y Atlas (backend NestJS). Consultar cuando se creen o modifiquen endpoints, controladores o instancias HTTP.
+alwaysApply: false
+---
+
+# Skill: Versionado de API
+
+> Estrategia oficial del proyecto para versionar la comunicación HTTP entre Hermes y Atlas.
+
+## Estrategia elegida: URI Path Versioning
+
+Formato de ruta: `/api/v{N}/recurso` donde `N` es un entero positivo.
+
+| Criterio | URI (`/api/v1/`) | Header (`Accept-Version`) | Query (`?v=1`) |
+|----------|:-:|:-:|:-:|
+| Visibilidad | ✅ Clara | ❌ Oculta | ⚠️ Media |
+| Cache-friendly | ✅ Sí | ❌ Requiere `Vary` | ⚠️ Parcial |
+| Swagger | ✅ Nativo | ⚠️ Config extra | ⚠️ Config extra |
+| Debugging | ✅ Fácil | ❌ Difícil | ⚠️ Parcial |
+| NestJS soporte | ✅ `enableVersioning(URI)` | ✅ `enableVersioning(HEADER)` | ❌ Manual |
+
+## Configuración actual
+
+### Atlas (backend NestJS) — [main.ts](mdc:atlas/src/main.ts)
+
+```typescript
+app.setGlobalPrefix('api');
+app.enableVersioning({
+  type: VersioningType.URI,
+  defaultVersion: '1',
+});
+```
+
+| Componente | Responsabilidad |
+|-----------|----------------|
+| `setGlobalPrefix('api')` | Prefijo fijo `/api` para todas las rutas |
+| `enableVersioning(URI)` | Agrega `/v{N}` después del prefijo |
+| `defaultVersion: '1'` | Todos los controladores existentes responden en `v1` sin decoradores extra |
+
+**Resultado**: `GET /api/v1/document-type/select`, `POST /api/v1/affiliate`, etc.
+
+### Hermes (frontend Next.js) — [config.ts](mdc:hermes/src/config/config.ts)
+
+```typescript
+export const API_VERSION = 'v1';
+export const API_PREFIX = `/api/${API_VERSION}`;
+```
+
+La instancia de Axios ([AtlasAxios.instance.ts](mdc:hermes/src/infrastructure/network/AtlasAxios.instance.ts)) usa:
+
+```typescript
+baseURL: `${AtlasApiUrl}${API_PREFIX}`
+// Resultado: http://localhost:3000/api/v1
+```
+
+Los repositorios usan rutas relativas (`/affiliate`, `/document-type/select`). El prefijo se agrega automáticamente por el `baseURL`.
+
+## Reglas de versionado
+
+| Regla | Descripción |
+|-------|-------------|
+| Versión actual | `v1` para toda la API |
+| Cuándo crear `v2` | Solo cuando hay **breaking changes** (campos obligatorios nuevos, DTOs renombrados, cambio de comportamiento) |
+| Cambios no-breaking | Agregar campos opcionales, nuevos endpoints → se hacen en la versión actual sin incrementar |
+| Deprecación | Se pueden mantener `v1` y `v2` en paralelo con timeline de sunset |
+| Número de versión | Entero positivo, se incrementa de 1 en 1 |
+
+## Cómo agregar un endpoint v2 en Atlas
+
+### Opción 1: Controlador completo en v2
+
+Cuando todo el recurso cambia su contrato:
+
+```typescript
+// v1 — existente (no cambia nada, usa defaultVersion: '1')
+@Controller('affiliate')
+export class AffiliateController {
+  @Post()
+  findAffiliate(@Body() dto: AffiliateDto) { ... }
+}
+
+// v2 — nuevo controlador con contrato diferente
+@Controller({ path: 'affiliate', version: '2' })
+export class AffiliateV2Controller {
+  @Post()
+  findAffiliate(@Body() dto: AffiliateV2Dto) { ... }
+}
+```
+
+- `POST /api/v1/affiliate` → `AffiliateController`
+- `POST /api/v2/affiliate` → `AffiliateV2Controller`
+
+> Registrar ambos controladores en el mismo módulo NestJS.
+
+### Opción 2: Endpoint específico en v2
+
+Cuando solo un método del controlador cambia:
+
+```typescript
+@Controller('affiliate')
+export class AffiliateController {
+  @Version('1')
+  @Post()
+  findAffiliateV1(@Body() dto: AffiliateDto) { ... }
+
+  @Version('2')
+  @Post()
+  findAffiliateV2(@Body() dto: AffiliateV2Dto) { ... }
+}
+```
+
+> Importar `@Version` desde `@nestjs/common`.
+
+### Opción 3: Endpoint multi-versión
+
+Cuando un endpoint es compatible con varias versiones:
+
+```typescript
+@Version(['1', '2'])
+@Get()
+findAll() { ... }
+```
+
+## Cómo consumir v2 desde Hermes
+
+### Opción A: Toda la app migra a v2
+
+Cambiar solo la constante en [config.ts](mdc:hermes/src/config/config.ts):
+
+```typescript
+export const API_VERSION = 'v2';
+// API_PREFIX se recalcula automáticamente: /api/v2
+```
+
+Todos los repositorios apuntan a v2 sin cambiar rutas relativas.
+
+### Opción B: Consumir v1 y v2 en paralelo
+
+Crear una segunda instancia de Axios para v2:
+
+```typescript
+// config.ts
+export const API_VERSION = 'v1';
+export const API_PREFIX = `/api/${API_VERSION}`;
+
+export const API_VERSION_V2 = 'v2';
+export const API_PREFIX_V2 = `/api/${API_VERSION_V2}`;
+```
+
+```typescript
+// AtlasAxiosV2.instance.ts
+import { API_PREFIX_V2 } from '@/config/config';
+
+const AtlasAxiosV2Instance = axios.create({
+  baseURL: `${AtlasApiUrl}${API_PREFIX_V2}`,
+  withCredentials: true,
+});
+```
+
+Registrar en IoC con un token diferente y usarlo solo en los repositorios que necesiten v2.
+
+## Prohibiciones
+
+| Prohibido | Razón |
+|-----------|-------|
+| Hardcodear `/api/v1/` en rutas de repositorios | El prefijo va en `baseURL`, las rutas son relativas |
+| Cambiar `defaultVersion` en Atlas sin migrar Hermes | Rompe la comunicación entre servicios |
+| Crear `v2` para cambios no-breaking | Agrega complejidad innecesaria |
+| Mezclar versiones en la variable de entorno | `NEXT_PUBLIC_ATLAS_API_URL` solo tiene host+puerto, nunca `/api/v1` |
+| Eliminar `v1` sin período de deprecación | Rompe clientes existentes |
+
+## Checklist para nueva versión
+
+```markdown
+- [ ] ¿Es realmente un breaking change? (si no, mantener versión actual)
+- [ ] Controlador/endpoint v2 creado en Atlas con `version: '2'` o `@Version('2')`
+- [ ] v1 sigue funcionando sin cambios
+- [ ] Tests para ambas versiones (v1 y v2)
+- [ ] Hermes actualizado: nueva constante o nueva instancia Axios según estrategia
+- [ ] Swagger documenta ambas versiones
+- [ ] Comunicación al equipo sobre deprecación de v1 (si aplica)
+```

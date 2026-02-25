@@ -1,0 +1,43 @@
+---
+description: Patron de Use Case en Domain (solo frontend Clean Architecture)
+globs:
+  - "**/src/domain/usecases/**"
+---
+
+# Skill: Use Case
+
+> Solo frontend. En NestJS la lógica vive en Services.
+
+## Estructura
+
+- Ruta: `src/domain/usecases/<feature>/<NombreUseCase>.ts`
+- Un Use Case por archivo
+- Interfaces `Input` y `Result` explícitas
+- Método: `execute(input): Promise<Result>`
+
+## Patron
+
+```typescript
+export class GetProductsUseCase {
+  constructor(private readonly productRepository: IProductRepository) {}
+
+  async execute(input: GetProductsInput): Promise<GetProductsResult> {
+    try {
+      if (input.limit && input.limit < 0) throw new ValidationError('Limit must be positive');
+      const products = await this.productRepository.findAll(input);
+      return { products, total: products.length };
+    } catch (error) {
+      if (error instanceof AppError) throw error;
+      throw new AppError('Error', error instanceof Error ? error : new Error(String(error)));
+    }
+  }
+}
+```
+
+## Reglas
+
+- NO importar React, Axios, NestJS
+- NO acceder a window, localStorage, fetch
+- Validar datos de negocio dentro del Use Case
+- Lanzar errores tipados (AppError, ValidationError)
+- Código puro, sin efectos secundarios

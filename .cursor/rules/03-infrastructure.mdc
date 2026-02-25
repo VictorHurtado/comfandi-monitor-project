@@ -1,0 +1,15 @@
+---
+description: Limites de la capa Infrastructure - implementa contratos, traduce datos, maneja errores tecnicos
+globs:
+  - "**/src/infrastructure/**"
+---
+
+# Infrastructure Layer (Clean Architecture — frontend)
+
+> **Aplica a**: proyectos frontend (Next.js/React). En NestJS, los repositorios y servicios viven dentro de cada modulo con DI nativo (ver `nestjs/SKILL.mdc`).
+
+**PUEDE**: implementar repositorios, servicios HTTP/auth/storage, configurar IoC (InversifyJS), acceder a APIs externas.
+
+**NO PUEDE**: logica de UI, reglas de negocio complejas, acceso directo a Redux.
+
+**Reglas**: traducir datos externos a modelos de dominio, manejar errores tecnicos, cumplir contratos de Domain, mapeo explicito DTO → modelo.

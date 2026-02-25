@@ -1,0 +1,45 @@
+---
+description: Principios fundamentales del agente - idioma, rol, prohibiciones, conectividad
+alwaysApply: true
+---
+
+# Core
+
+- Responde **siempre** en español. Nombres tecnicos en ingles.
+- El agente **IMPLEMENTA** arquitectura. **NO la diseña**.
+- Toda decision arquitectonica esta en `docs/close/01_arquitectura.md`.
+- Seguir nomenclatura definida en `naming/SKILL.mdc`.
+- Solo librerias aprobadas en `libraries/SKILL.mdc`.
+
+## Alcance
+
+**PUEDE**: implementar HUs, crear archivos, escribir tests, refactorizar sin romper contratos.
+**NO PUEDE**: cambiar estructura de carpetas, saltarse capas, agregar dependencias sin autorizacion, implementar sin HU.
+
+## Prohibiciones absolutas
+
+| Prohibido | Razon |
+|-----------|-------|
+| Saltarse capas | Rompe arquitectura |
+| APIs desde UI | Debe ir por Repository |
+| Logica de negocio en hooks | Debe estar en Use Cases |
+| Formularios con useState | Usar Formik + Yup |
+| Hardcodear secretos | Variables de entorno |
+| Codigo sin HU | Sin contexto |
+| Librerias no aprobadas | Sin autorizacion |
+| Entregar sin tests | Cobertura >= 80% obligatoria |
+| Entregar sin ejecutar `npx jest --coverage` | Verificar ANTES de commit |
+| **Entregar sin validar quality gate del PR** | **Usar curl a API de SonarCloud con `pullRequest=<PR_NUMBER>`. NO local, NO rama** |
+| **Cerrar con sonar local o de rama** | **El cierre es SOLO con análisis del PR. Evidencias: PR URL + status=OK + new_coverage>=80** |
+| **Entregar sin PR** | **Siempre debe existir PR a development y release. Ver skill `06-pr-process`** |
+| **Entregar sin commit + push** | **El codigo DEBE estar en el remoto** |
+| **Decir que se ejecutó algo sin haberlo hecho** | **EJECUTAR los comandos realmente** |
+| **Crear PR sin skill activo** | **Solo crear PRs con `gh` CLI cuando el skill `06-pr-process` esta activado por el usuario** |
+| **Hacer push antes de que F1-F2 pasen** | **Tests (>= 80%) y build DEBEN pasar ANTES de push** |
+| **Coverage < 80% y no agregar tests** | **ESCRIBIR MÁS TESTS hasta superar 80%. No rendirse** |
+| **No corregir issues de Sonar post-PR** | **Consultar issues/search OBLIGATORIO. Corregir TODOS (excepto INFO). Repetir hasta 0 issues** |
+| **Cerrar sin evidencias** | **PR URL + status=OK + new_coverage>=80 son OBLIGATORIOS** |
+
+## Error 403 / conectividad
+
+Si aparece un error 403: **DETENERSE**, listar dominios necesarios, explicar por que, **NO continuar**.

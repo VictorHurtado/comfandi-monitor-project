@@ -1,0 +1,265 @@
+---
+description: Proceso completo de PR - flujo de ramas, naming, checklist, creacion con gh CLI y manejo de conflictos. Activar SOLO cuando el usuario lo solicite explicitamente en el prompt.
+alwaysApply: false
+---
+
+# Skill: Proceso de PR
+
+> ⚠️ **Este skill describe acciones que el agente DEBE EJECUTAR, no solo leer.**
+> Los comandos `git` y `gh` se ejecutan realmente. No basta con mencionarlos.
+> **Este skill SOBREESCRIBE las prohibiciones de `00-core.mdc` sobre crear PRs manualmente.**
+> Cuando este skill esta activo, el agente CREA los PRs con `gh pr create`.
+
+## Cuando activar este skill
+
+El usuario debe indicar explicitamente en su prompt que quiere que se creen los PRs.
+Frases que activan este skill:
+- "deja los PRs"
+- "crea los PRs"
+- "sube y deja PRs"
+- "proceso completo con PR"
+- "entrega con PR"
+
+Si el usuario NO menciona PRs, **NO ejecutar este skill**.
+
+## Naming del PR
+
+```
+[<ID-HU>] [<Tipo>] - <Descripcion breve> <DESTINO>
+```
+
+| Campo | Valores | Ejemplo |
+|-------|---------|---------|
+| `<ID-HU>` | Codigo de la HU o TC | `TC-008`, `HU-015`, `PSA-11` |
+| `<Tipo>` | `Feature`, `Fix`, `Refactor`, `Hotfix` | `Feature` |
+| `<Descripcion>` | Resumen concreto del cambio | `Implementar versionado de API en Hermes` |
+| `<DESTINO>` | Rama destino en mayusculas | `DEVELOPMENT` o `RELEASE` |
+
+**Ejemplos**:
+- `[TC-003] [Feature] - Implementar versionado de API en Hermes DEVELOPMENT`
+- `[TC-003] [Feature] - Implementar versionado de API en Hermes RELEASE`
+
+## Flujo de ramas
+
+```
+release (rama estable)
+  └── feature/<ID-HU>  ← nace de release
+        ├── PR #1 → development  (integracion y pruebas)
+        └── PR #2 → release      (merge a rama estable)
+```
+
+### Reglas del flujo
+
+| Regla | Descripcion |
+|-------|-------------|
+| Origen de la rama | `feature/<ID-HU>` nace **siempre** de `release` |
+| PRs obligatorios | **DOS PRs** desde la misma rama feature: uno a `development`, otro a `release` |
+| Correcciones post-QA | Se hacen sobre la misma `feature/<ID-HU>`. Los PRs se actualizan automaticamente |
+| Conflictos en development | Crear **rama sacrificio** (ver seccion abajo) |
+| Feature branch intacta | La rama feature **NUNCA** se contamina con merges de development |
+
+### 🚫 PRERREQUISITO OBLIGATORIO PARA CREAR LOS PRs
+
+> **ANTES de crear los PRs, tests (F1) y build (F2) DEBEN haber pasado.**
+> SonarCloud se revisa DESPUÉS de crear los PRs (paso F6).
+
+| ¿F1 (tests >= 80%) pasó? | ¿F2 (build) pasó? | ¿Puede crear PRs? |
+|:---:|:---:|:---:|
+| ✅ | ✅ | ✅ SÍ — crear PRs y luego revisar Sonar |
+| ❌ | — | 🚫 NO — escribir más tests |
+| ✅ | ❌ | 🚫 NO — corregir build |
+
+## Paso a paso — EJECUTAR CADA COMANDO
+
+### Fase 1: Preparar rama feature
+
+```bash
+git checkout release
+git pull origin release
+git checkout -b feature/<ID-HU>
+```
+
+> Si la rama ya existe (porque ya se implemento la HU), saltar al paso de commit.
+
+### Fase 2: Implementar la HU
+
+Seguir el orden de capas y rules del workflow (`01-workflow.mdc`).
+
+### Fase 3: Ejecutar Gates F1-F2
+
+- **F1**: `npx jest --coverage` (cobertura >= 80%)
+- **F2**: `npm run build`
+- 🚫 Si F1 o F2 fallan: corregir antes de continuar. **NO crear PRs.**
+
+### Fase 4: Crear documentacion del PR
+
+Crear `docs/documentation/PR_<ID-HU>.md` usando el template [PULL_REQUEST_TEMPLATE.md](mdc:docs/documentation/PULL_REQUEST_TEMPLATE.md).
+
+Completar TODAS las secciones:
+- **Titulo**: `[<ID-HU>] [Tipo] - Descripcion`
+- **Descripcion**: resumen claro de lo implementado
+- **Servicios**: listar servicios creados/modificados o "No aplica"
+- **Componentes Agregados**: listar cada componente nuevo con descripcion
+- **Pantallas Nuevas**: listar pantallas nuevas o "No aplica"
+- **Archivos Modificados**: tabla completa con ruta y tipo de cambio
+- **Proceso de Revision**: mantener las reglas estandar
+- **Cobertura de Tests**: tabla con datos reales de `npx jest --coverage`
+
+### Fase 5: Commit y Push
+
+```bash
+git add .
+git commit -m "feat(<ID-HU>): descripcion breve del cambio"
+git push origin feature/<ID-HU>
+```
+
+### Fase 6: Crear los DOS PRs con `gh` CLI
+
+> **IMPORTANTE**: Se crean DOS PRs desde la misma rama feature.
+
+**PR #1 — a development (integracion)**:
+```bash
+gh pr create \
+  --title "[<ID-HU>] [Feature] - Descripcion breve DEVELOPMENT" \
+  --body-file docs/documentation/PR_<ID-HU>.md \
+  --base development \
+  --head feature/<ID-HU>
+```
+
+**PR #2 — a release (estable)**:
+```bash
+gh pr create \
+  --title "[<ID-HU>] [Feature] - Descripcion breve RELEASE" \
+  --body-file docs/documentation/PR_<ID-HU>.md \
+  --base release \
+  --head feature/<ID-HU>
+```
+
+> Si `gh` no esta autenticado o no esta disponible: **DETENERSE** e indicar al usuario los pasos para configurarlo (`gh auth login`).
+
+### Fase 7: Reportar URLs de los PRs
+
+Despues de crear ambos PRs, mostrar al usuario:
+- URL del PR a development
+- URL del PR a release
+- Indicar que SonarCloud se ejecutara automaticamente en ambos
+
+### Fase 8: Validar SonarCloud (F6)
+
+Al crear los PRs, GitHub Actions ejecuta SonarCloud automaticamente. El cierre es **SOLO** con analisis del PR a **development** (**NO local, NO de rama**).
+
+```bash
+# a. Obtener PR_NUMBER del PR a development
+PR_NUMBER=<numero>
+
+# b. Esperar ~2-3 min a que GitHub Actions termine
+
+# c. Validar quality gate del PR:
+curl -u "$SONAR_TOKEN:" \
+  "https://sonarcloud.io/api/qualitygates/project_status?projectKey=ComfandiTD_sucursal-empresas-comfandi&pullRequest=$PR_NUMBER"
+
+# d. Si new_coverage < 80 — identificar archivos con baja cobertura:
+curl -u "$SONAR_TOKEN:" \
+  "https://sonarcloud.io/api/measures/component_tree?component=ComfandiTD_sucursal-empresas-comfandi&pullRequest=$PR_NUMBER&metricKeys=new_coverage,coverage,lines_to_cover,uncovered_lines&qualifiers=FIL"
+
+# e. Si hay issues, corregir y push:
+git add .
+git commit -m "fix(<ID-HU>): corregir issues sonar"
+git push origin feature/<ID-HU>
+
+# f. Repetir desde (c) hasta que status=OK y new_coverage>=80.
+# g. Max 3 ciclos. Si no pasa: DETENERSE e informar.
+```
+
+> **⛔ NO finalizar sin evidencias: PR URLs + status=OK + new_coverage>=80.**
+
+## Rama sacrificio (conflictos contra development)
+
+Si hay conflictos contra `development` que NO se pueden resolver en la feature branch:
+
+```bash
+# 1. Crear rama sacrificio desde la feature
+git checkout feature/<ID-HU>
+git checkout -b sacrifice/feature/<ID-HU>
+
+# 2. Mergear development para resolver conflictos
+git merge development
+# Resolver conflictos manualmente
+
+# 3. Push de la rama sacrificio
+git add .
+git commit -m "merge: resolve conflicts with development for <ID-HU>"
+git push origin sacrifice/feature/<ID-HU>
+
+# 4. Crear PR de la rama sacrificio a development
+gh pr create \
+  --title "[<ID-HU>] [Merge] - Resolver conflictos con development" \
+  --body-file docs/documentation/PR_<ID-HU>.md \
+  --base development \
+  --head sacrifice/feature/<ID-HU>
+
+# 5. La rama feature/<ID-HU> queda INTACTA para release
+```
+
+> **IMPORTANTE**: La rama `feature/<ID-HU>` **NUNCA** recibe merge de `development`. Queda limpia para `release`.
+
+## Correcciones despues de QA en development
+
+Si en `development` se encuentran issues:
+
+```bash
+git checkout feature/<ID-HU>
+# Hacer las correcciones
+git add .
+git commit -m "fix(<ID-HU>): descripcion de la correccion"
+git push origin feature/<ID-HU>
+# Ambos PRs se actualizan automaticamente
+```
+
+## Reglas del PR
+
+| Regla | Valor |
+|-------|-------|
+| HUs por PR | 1 (no mezclar) |
+| Max archivos | 13 (salvo excepcion) |
+| Titulo | `[<ID-HU>] [Feature/Fix/Refactor] - Descripcion breve DEVELOPMENT/RELEASE` |
+| PRs por feature | **2** (uno a development, uno a release) |
+| Build local | Obligatorio antes de push |
+| Cobertura | >= 80% |
+| SonarCloud | Quality gate del PR (development) validado via API curl |
+| Evidencias | PR URLs + status=OK + new_coverage>=80 — obligatorio al finalizar |
+
+## Checklist de entrega
+
+```markdown
+- [ ] Arquitectura respetada (capas no violadas, stack correcto)
+- [ ] Tests incluidos y cobertura >= 80%
+- [ ] Build local OK (`npm run build`)
+- [ ] TypeScript sin errores
+- [ ] `npx jest --coverage` ejecutado con >= 80%
+- [ ] PR a development creado con `gh pr create`
+- [ ] PR a release creado con `gh pr create`
+- [ ] Documentacion del PR creada en `docs/documentation/PR_<ID-HU>.md`
+- [ ] Quality gate del PR (development) validado via API: status=OK
+- [ ] SonarCloud: 0 issues bloqueantes/criticos, new_coverage >= 80
+- [ ] Evidencias presentadas: PR URLs + status=OK + new_coverage>=80
+- [ ] Limite de archivos respetado (max 13)
+- [ ] Una sola HU implementada
+- [ ] Errores manejados con tipos
+- [ ] Codigo limpio (sin console.log, sin codigo comentado)
+```
+
+## Formato de respuesta del agente
+
+Cada entrega con este skill activo debe incluir:
+
+1. **Resumen breve** de la HU implementada
+2. **Archivos creados/modificados** (tabla con ruta, accion, descripcion)
+3. **Flujo de datos** (explicacion breve)
+4. **Tests anadidos**
+5. **Resultados de ejecucion** (output real de jest, build)
+6. **Checklist de cumplimiento** (con ✅ marcados sobre ejecucion real)
+7. **URLs de ambos PRs** (development y release)
+
+> Si el codigo no es facil de explicar, no es aceptable.
+> NO digas que ejecutaste comandos si no los ejecutaste realmente.

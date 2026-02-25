@@ -1,0 +1,46 @@
+---
+description: Patron ViewModel para componentes complejos (solo frontend)
+globs:
+  - "**/src/presentation/**"
+---
+
+# Skill: ViewModel
+
+> Solo frontend. Para componentes complejos, separar lógica de UI.
+
+## Estructura
+
+```
+organisms/ProductForm/
+├── ProductForm.tsx          # UI pura
+├── useProductForm.vm.ts     # ViewModel (hooks + lógica)
+└── __tests__/
+```
+
+## Patron
+
+```typescript
+// useProductForm.vm.ts
+export const useProductFormVM = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const form = useForm({ resolver: yupResolver(schema), defaultValues: { name: '', price: 0 } });
+  const handleSubmit = useCallback(async (data) => {
+    setIsSubmitting(true);
+    try { /* UseCase */ } finally { setIsSubmitting(false); }
+  }, []);
+  return { form, isSubmitting, handleSubmit };
+};
+
+// ProductForm.tsx
+export const ProductForm = () => {
+  const { form, isSubmitting, handleSubmit } = useProductFormVM();
+  return <form onSubmit={form.handleSubmit(handleSubmit)}>{/* UI */}</form>;
+};
+```
+
+## Reglas
+
+- Archivo `.vm.ts`, componente `.tsx` solo renderiza
+- ViewModel consume Use Cases, nunca servicios directos
+- Manejar loading/error/empty states
+- Validación con Yup (schema en Domain)

@@ -1,0 +1,48 @@
+---
+description: Convenciones de nomenclatura para archivos, variables, endpoints, BD y tests
+globs:
+  - "*.ts"
+  - "*.tsx"
+---
+
+# Skill: Naming
+
+## Archivos y clases
+
+| Tipo | Convencion | Ejemplo |
+|------|------------|---------|
+| Interfaces | Prefijo `I` | `IUserRepository.ts` |
+| Use Cases | Sufijo `UseCase` | `GetProductsUseCase.ts` |
+| Services | Sufijo `Service` | `ApiService.ts` |
+| Repositories | Sufijo `Repository` | `UserRepository.ts` |
+| Hooks | Prefijo `use` | `useAuth.ts` |
+| Slices | Sufijo `Slice` | `authSlice.ts` |
+| Componentes | PascalCase | `ProductCard.tsx` |
+| ViewModels | Sufijo `.vm` | `useProductForm.vm.ts` |
+
+## Variables y funciones
+
+| Tipo | Convencion | Ejemplo |
+|------|------------|---------|
+| Variables | camelCase | `userName` |
+| Constantes | UPPER_SNAKE_CASE | `API_BASE_URL` |
+| Tipos/Interfaces | PascalCase | `ProductData` |
+
+## Endpoints API
+
+kebab-case, versionados, plural, sin verbos: `POST /api/v1/users`
+
+## BD
+
+snake_case: tablas plural (`user_profiles`), PK `id`, FK `tabla_id`, fechas `_at`, booleanos `is_`/`has_`.
+
+## Tests
+
+| Proyecto | Carpeta | Extension |
+|----------|---------|-----------|
+| Frontend | `__tests__/` | `.test.ts(x)` |
+| Backend NestJS | `tests/` (dentro del módulo) | `.spec.ts` |
+
+## Organizacion
+
+Un Use Case por archivo, un repo por entidad, un slice por feature, un componente por archivo.

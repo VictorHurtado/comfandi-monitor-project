@@ -1,0 +1,88 @@
+---
+description: Reglas de testing - cobertura >= 80%, patron de test, escenarios minimos
+globs:
+  - "**/__tests__/**"
+  - "**/tests/**"
+  - "*.test.*"
+  - "*.spec.*"
+---
+
+# Skill: Testing
+
+> **NUNCA entregar codigo sin tests. Cobertura < 80% = tarea INCOMPLETA.**
+
+## Cobertura obligatoria
+
+| Capa | Minimo |
+|------|--------|
+| Use Cases | 90% |
+| Repos / Servicios / Controllers | 80% |
+| **Global** | **80%** |
+
+## Escenarios minimos
+
+| Tipo | Escenarios |
+|------|------------|
+| Use Case | exitoso + error + input invalido |
+| Repositorio | respuesta OK + error red/BD |
+| Controller | 200 + 400/404 + error no controlado |
+
+## Ubicacion
+
+| Proyecto | Convencion | Ejemplo |
+|----------|------------|---------|
+| Frontend | `__tests__/` con `.test.ts(x)` | `usecases/__tests__/Get.test.ts` |
+| Backend NestJS | `tests/` dentro del modulo con `.spec.ts` | `modules/debug/tests/debug.service.spec.ts` |
+
+## Patron frontend
+
+```typescript
+describe('GetProductsUseCase', () => {
+  let useCase: GetProductsUseCase;
+  let mockRepo: jest.Mocked<IProductRepository>;
+
+  beforeEach(() => {
+    mockRepo = { findAll: jest.fn() } as any;
+    useCase = new GetProductsUseCase(mockRepo);
+  });
+
+  it('should return products', async () => {
+    mockRepo.findAll.mockResolvedValue([{ id: '1', name: 'P' }]);
+    const result = await useCase.execute({});
+    expect(result.products).toHaveLength(1);
+  });
+
+  it('should throw on invalid input', async () => {
+    await expect(useCase.execute({ limit: -1 })).rejects.toThrow();
+  });
+});
+```
+
+## Patron backend (NestJS)
+
+```typescript
+describe('DebugService', () => {
+  let service: DebugService;
+
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      providers: [DebugService],
+    }).compile();
+    service = module.get(DebugService);
+  });
+
+  it('should return greeting', () => {
+    expect(service.getGreeting()).toHaveProperty('message');
+  });
+});
+```
+
+## Validacion
+
+```bash
+npx jest --coverage
+```
+
+- Coverage < 80% → **ESCRIBIR MÁS TESTS**. No es detenerse, es CORREGIR.
+- Test falla → corregir antes de continuar.
+- NO hacer commit sin pasar este paso.

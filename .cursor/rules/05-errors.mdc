@@ -1,0 +1,25 @@
+---
+description: Manejo de errores tipados obligatorio - nunca errores crudos a la UI
+alwaysApply: true
+---
+
+# Errores
+
+- **Nunca** lanzar errores crudos (`throw new Error(...)`) a la UI.
+- Usar `AppError` o subclases tipadas.
+- Importar desde `@/utils/errors/domain-errors`.
+- Subclases disponibles:
+  - `ValidationError` — datos invalidos o regla de negocio incumplida
+  - `NotFoundError` — recurso no encontrado (HTTP 404)
+  - `ConflictError` — conflicto de estado o duplicados (HTTP 409)
+  - `UnauthorizedError` — no autenticado o token invalido (HTTP 401)
+  - `ForbiddenError` — sin permisos suficientes (HTTP 403)
+  - `InternalServerError` — fallo inesperado o servicio caido (HTTP 500)
+  - `BadRequestError` — request mal formada (HTTP 400)
+  - `UnprocessableEntityError` — datos validos pero no procesables (HTTP 422)
+- Cada capa traduce errores al tipo apropiado:
+  - **Domain**: lanza errores tipados de negocio.
+  - **Infrastructure**: captura errores HTTP/BD → errores de dominio.
+  - **Presentation**: captura errores de dominio → mensaje al usuario (`instanceof AppError`).
+- En Use Cases: siempre usar `return await` en try/catch para que `instanceof` funcione.
+- Ver patron completo en `errors/SKILL.mdc`.

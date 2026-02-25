@@ -1,0 +1,38 @@
+---
+description: Workflow portable de implementacion y entrega
+alwaysApply: true
+---
+
+# Workflow
+
+## Antes de codear
+
+1. Leer contexto de producto en `<PRODUCT_VISION_PATH>`.
+2. Leer arquitectura en `<ARCHITECTURE_PATH>`.
+3. Leer HU/tarea asignada.
+4. Identificar proyecto/modulo usando `<PROJECT_MAP_SKILL_PATH>` (si aplica).
+5. Si falta contexto: detenerse y preguntar.
+
+## Orden de implementacion
+
+1. Domain / Business
+2. Infrastructure / Data access
+3. Presentation / API / UI
+4. Tests
+5. Documentacion tecnica (si aplica)
+
+## Gates (bloqueantes)
+
+| Gate | Comando | Umbral |
+|------|---------|--------|
+| F1 - Tests | `npx jest --coverage` | `>= 80%` |
+| F2 - Build | `npm run build` o equivalente | sin errores |
+
+Si F1 o F2 fallan: corregir y repetir antes de push.
+
+## Entrega
+
+- Commit y push obligatorios antes de cerrar tarea.
+- Si el usuario pide PRs: crear PRs segun la estrategia definida en la regla de PR.
+- Validar SonarCloud con `pullRequest=<PR_NUMBER>` cuando aplique.
+

@@ -1,0 +1,30 @@
+---
+description: Mapa de proyectos del monorepo - identifica directorio y arquitectura segun la HU
+alwaysApply: false
+---
+
+# Skill: Mapa de proyectos
+
+## Registro
+
+| Proyecto | Directorio | Stack | Arquitectura | Palabras clave |
+|----------|-----------|-------|-------------|----------------|
+| Frontend Portal | `hermes/` | Next.js 14 (App Router) | Clean Architecture | hermes, frontend, portal, consulta |
+| API Backend | `atlas/` | NestJS 11 | NestJS Modules | atlas, api, backend, endpoint |
+
+## Arquitecturas
+
+**Clean Architecture (frontend)**: `domain/` → `infrastructure/` → `presentation/` → `app/`
+Skills: usecase, repository, ioc, viewmodel, errors.
+Rules de capa: 02-domain, 03-infrastructure, 04-presentation.
+
+**NestJS Modules (backend)**: `modules/<modulo>/` con controller + service + dto + tests.
+Skills: nestjs, repository, errors.
+NO aplican rules de capa frontend.
+
+## Reglas
+
+1. Leer HU → buscar palabras clave → identificar proyecto y arquitectura.
+2. Si no hay match: **PREGUNTAR**.
+3. NO mezclar archivos de distintos proyectos en un PR.
+4. NO aplicar patrones de frontend a backend ni viceversa.

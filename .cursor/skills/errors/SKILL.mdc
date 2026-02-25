@@ -1,0 +1,53 @@
+---
+description: Clases de error tipadas - patron de referencia
+globs:
+  - "**/src/utils/errors/**"
+  - "**/src/domain/errors/**"
+---
+
+# Skill: Errores tipados
+
+Ruta: `<proyecto>/src/utils/errors/domain-errors.ts`
+
+## Jerarquia
+
+| Clase | Uso | HTTP |
+|-------|-----|------|
+| `AppError` | Clase base | — |
+| `ValidationError` | Regla de negocio incumplida | — |
+| `BadRequestError` | Request mal formada | 400 |
+| `UnauthorizedError` | No autenticado | 401 |
+| `ForbiddenError` | Sin permisos | 403 |
+| `NotFoundError` | Recurso no encontrado | 404 |
+| `ConflictError` | Duplicados/conflicto | 409 |
+| `UnprocessableEntityError` | Datos válidos no procesables | 422 |
+| `InternalServerError` | Fallo inesperado | 500 |
+
+## Implementacion base
+
+```typescript
+export class AppError extends Error {
+  constructor(message: string, error: Error) {
+    super(message);
+    Object.setPrototypeOf(this, new.target.prototype);
+    this.name = this.constructor.name;
+    this.stack = error.stack;
+    this.cause = error.cause;
+  }
+}
+// Subclases: constructor simple, llaman super(message, new Error('CODE'))
+```
+
+## Uso por capa
+
+```
+Infrastructure: captura error HTTP/BD → lanza error tipado
+Domain/UseCase: try/catch con `return await` → re-lanza AppError
+Presentation: instanceof AppError → muestra message al usuario
+```
+
+## Reglas
+
+- Nunca `throw new Error(...)` a la UI
+- Siempre `return await` en try/catch de Use Cases
+- Diferencia: `BadRequestError` = forma, `ValidationError` = contenido/negocio
