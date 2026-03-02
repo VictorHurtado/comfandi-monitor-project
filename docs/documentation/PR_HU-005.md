@@ -67,4 +67,4 @@ Se implementó la HU-005 para renderizar la tarjeta de SonarQube en el dashboard
 
 | Archivo | Stmts | Branch | Funcs | Lines |
 | --- | --- | --- | --- | --- |
-| **Global** | **89.59%** | **76.19%** | **95.83%** | **90.18%** |
+| **Global** | **89.05%** | **77.98%** | **96.42%** | **90.15%** |
