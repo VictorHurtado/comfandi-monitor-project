@@ -1,6 +1,7 @@
 import { container } from "@/infrastructure/ioc/container";
 import { USECASE_TYPES } from "@/infrastructure/ioc/usecases/usecases.types";
 import { GetPlatformHealthStatusUseCase } from "@/domain/usecases/GetPlatformHealthStatusUseCase";
+import { GetSonarIntegrationUseCase } from "@/domain/usecases/GetSonarIntegrationUseCase";
 import { GetSonarQubeMetricsUseCase } from "@/domain/usecases/GetSonarQubeMetricsUseCase";
 import { GetTechnicalIntegrationCardsUseCase } from "@/domain/usecases/GetTechnicalIntegrationCardsUseCase";
 import { REPOSITORY_TYPES } from "@/infrastructure/ioc/repositories/repositories.types";
@@ -23,6 +24,14 @@ describe("IoC container", () => {
     expect(useCase).toBeInstanceOf(GetSonarQubeMetricsUseCase);
   });
 
+  it("resolves GetSonarIntegrationUseCase", () => {
+    const useCase = container.get<GetSonarIntegrationUseCase>(
+      USECASE_TYPES.GetSonarIntegrationUseCase
+    );
+
+    expect(useCase).toBeInstanceOf(GetSonarIntegrationUseCase);
+  });
+
   it("resolves technical integration cards use case", () => {
     const useCase = container.get<GetTechnicalIntegrationCardsUseCase>(
       USECASE_TYPES.GetTechnicalIntegrationCardsUseCase
@@ -33,6 +42,7 @@ describe("IoC container", () => {
 
   it("exports symbols for service and repository contracts", () => {
     expect(String(REPOSITORY_TYPES.IStatusRepository)).toContain("IStatusRepository");
+    expect(String(REPOSITORY_TYPES.ISonarRepository)).toContain("ISonarRepository");
     expect(String(REPOSITORY_TYPES.ISonarQubeRepository)).toContain("ISonarQubeRepository");
     expect(String(REPOSITORY_TYPES.ITechnicalIntegrationRepository)).toContain(
       "ITechnicalIntegrationRepository"
