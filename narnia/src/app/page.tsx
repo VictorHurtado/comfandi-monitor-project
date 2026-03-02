@@ -1,5 +1,5 @@
-import { HealthStatusPage } from "@/presentation/pages/HealthStatusPage";
+import { redirect } from "next/navigation";
 
-export default async function Home() {
-  return <HealthStatusPage />;
+export default function Home() {
+  redirect("/project-selector");
 }

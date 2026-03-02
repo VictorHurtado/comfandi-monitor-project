@@ -12,8 +12,10 @@ export async function GET(request: NextRequest) {
   const keycloakService = container.get<KeycloakService>(SERVICE_TYPES.KeycloakService);
 
   try {
-    const accessToken = parseBearerToken(request.headers.get("authorization"));
-    await keycloakService.validateAccessToken(accessToken);
+    if (!keycloakService.isAuthDisabled()) {
+      const accessToken = parseBearerToken(request.headers.get("authorization"));
+      await keycloakService.validateAccessToken(accessToken);
+    }
 
     const healthStatus = await getPlatformHealthStatusUseCase.execute();
     return NextResponse.json(healthStatus, { status: 200 });

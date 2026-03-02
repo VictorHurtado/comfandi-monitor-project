@@ -31,4 +31,24 @@ describe("environment", () => {
     expect(env.keycloakClientId).toBe("narnia-client");
     expect(env.keycloakClientSecret).toBe("secret");
   });
+
+  it("enables authDisabled when AUTH_DISABLED=true outside production", async () => {
+    process.env.AUTH_DISABLED = "true";
+    process.env.NODE_ENV = "development";
+
+    const { getEnvironment } = await import("@/infrastructure/config/environment");
+    const env = getEnvironment();
+
+    expect(env.authDisabled).toBe(true);
+  });
+
+  it("keeps auth enabled in production even with AUTH_DISABLED=true", async () => {
+    process.env.AUTH_DISABLED = "true";
+    process.env.NODE_ENV = "production";
+
+    const { getEnvironment } = await import("@/infrastructure/config/environment");
+    const env = getEnvironment();
+
+    expect(env.authDisabled).toBe(false);
+  });
 });
