@@ -1,15 +1,19 @@
 "use client";
 
 import { CalendarDays } from "lucide-react";
+import type { TechnicalIntegrationCard } from "@/domain/models/TechnicalIntegrationCard";
 import { ComplianceSummaryTable } from "@/presentation/components/organisms/ComplianceSummaryTable";
 import { IntegrationCardsGrid } from "@/presentation/components/organisms/IntegrationCardsGrid";
 import { RecentAlertsPanel } from "@/presentation/components/organisms/RecentAlertsPanel";
 import { AppSidebarLayout } from "@/presentation/components/templates/AppSidebarLayout";
-import { useSonarCard } from "@/presentation/hooks/useSonarCard";
 
-export function TechnicalHealthDashboardLayout() {
-  const { sonarData, isLoading, error } = useSonarCard();
+interface TechnicalHealthDashboardLayoutProps {
+  integrationCards: readonly TechnicalIntegrationCard[];
+}
 
+export function TechnicalHealthDashboardLayout({
+  integrationCards
+}: TechnicalHealthDashboardLayoutProps) {
   return (
     <AppSidebarLayout
       activeSection="dashboard"
@@ -57,11 +61,7 @@ export function TechnicalHealthDashboardLayout() {
         </article>
       </section>
 
-      <IntegrationCardsGrid
-        sonarIntegration={sonarData}
-        sonarIsLoading={isLoading}
-        sonarError={error}
-      />
+      <IntegrationCardsGrid integrationCards={integrationCards} />
 
       <section className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <RecentAlertsPanel />

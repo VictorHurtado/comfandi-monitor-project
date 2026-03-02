@@ -2,59 +2,55 @@
 
 ## 📌 Descripción
 
-Implementa la tarjeta de SonarQube en el dashboard de salud técnica (`/dashboard/technical-health`) con datos mock. La tarjeta muestra métricas clave (Quality Gate, Coverage, Bugs, Vulnerabilities) y estados visuales (healthy, warning, critical, unknown). Se respeta la arquitectura por capas (Presentation → Domain ← Infrastructure) con modelo, repositorio mock, use case e IoC.
+Se implementó la HU-005 para renderizar la tarjeta de SonarQube en el dashboard técnico con datos mock, incluyendo métricas legibles (`qualityGateStatus`, `coverage`, `bugs`, `vulnerabilities`) y estados visuales `healthy`, `warning`, `critical` y `unknown`, manteniendo arquitectura por capas.
 
 ## 🔄 Cambios Principales
 
 ### 🚀 Servicios
 
-- No aplica (se usa repositorio mock sin llamadas externas)
+- No aplica.
 
 ### 📦 Componentes Agregados
 
-| Componente | Capa | Descripción |
-|---|---|---|
-| `SonarQubeMetrics.ts` | Domain / Models | Modelo de métricas SonarQube (qualityGateStatus, coverage, bugs, vulnerabilities) |
-| `ISonarQubeRepository.ts` | Domain / Repositories | Contrato del repositorio de datos SonarQube |
-| `GetSonarQubeMetricsUseCase.ts` | Domain / UseCases | Caso de uso que obtiene datos de SonarQube via repositorio |
-| `MockSonarQubeRepository.ts` | Infrastructure / Repositories | Implementación mock que retorna datos hardcodeados |
-| `SonarQubeCard.tsx` | Presentation / Organisms | Tarjeta visual de SonarQube con estados, skeleton y fallback unknown |
+- `IntegrationCardsGrid` actualizado para render dinámico de integraciones con tarjeta SonarQube mock y fallback visual `unknown`.
 
 ### 📱 Pantallas Nuevas
 
-- No aplica (se integra en dashboard existente)
+- No aplica.
 
 ## 🛠️ Archivos Modificados
 
 | Archivo | Tipo de Cambio |
-|---|---|
-| `src/domain/models/SonarQubeMetrics.ts` | Nuevo — modelo de dominio |
-| `src/domain/repositories/ISonarQubeRepository.ts` | Nuevo — contrato repositorio |
-| `src/domain/usecases/GetSonarQubeMetricsUseCase.ts` | Nuevo — caso de uso |
-| `src/infrastructure/repositories/MockSonarQubeRepository.ts` | Nuevo — repositorio mock |
-| `src/infrastructure/ioc/repositories/repositories.types.ts` | Modificado — symbol ISonarQubeRepository |
-| `src/infrastructure/ioc/repositories/repositories.module.ts` | Modificado — binding mock repo |
-| `src/infrastructure/ioc/usecases/usecases.types.ts` | Modificado — symbol GetSonarQubeMetricsUseCase |
-| `src/infrastructure/ioc/usecases/usecases.module.ts` | Modificado — binding use case |
-| `src/presentation/components/organisms/SonarQubeCard.tsx` | Nuevo — componente tarjeta |
-| `src/presentation/components/organisms/IntegrationCardsGrid.tsx` | Modificado — integra SonarQubeCard |
-| `src/domain/usecases/__tests__/GetSonarQubeMetricsUseCase.test.ts` | Nuevo — tests use case |
-| `src/infrastructure/repositories/__tests__/MockSonarQubeRepository.test.ts` | Nuevo — tests repo mock |
-| `src/presentation/components/organisms/__tests__/SonarQubeCard.test.tsx` | Nuevo — tests tarjeta |
-| `src/presentation/components/organisms/__tests__/TechnicalHealthDashboardLayout.test.tsx` | Modificado — ajuste assertions |
+| --- | --- |
+| `narnia/src/domain/models/TechnicalIntegrationCard.ts` | Nuevo modelo de dominio para tarjetas técnicas y métricas Sonar |
+| `narnia/src/domain/repositories/ITechnicalIntegrationRepository.ts` | Nuevo contrato de repositorio de tarjetas técnicas |
+| `narnia/src/domain/usecases/GetTechnicalIntegrationCardsUseCase.ts` | Nuevo use case para obtener tarjetas técnicas |
+| `narnia/src/domain/usecases/__tests__/GetTechnicalIntegrationCardsUseCase.test.ts` | Tests del nuevo use case |
+| `narnia/src/infrastructure/repositories/TechnicalIntegrationRepository.ts` | Nuevo repositorio mock con fallback `unknown` |
+| `narnia/src/infrastructure/repositories/__tests__/TechnicalIntegrationRepository.test.ts` | Tests del repositorio mock |
+| `narnia/src/infrastructure/ioc/repositories/repositories.types.ts` | Nuevo símbolo IoC para `ITechnicalIntegrationRepository` |
+| `narnia/src/infrastructure/ioc/repositories/repositories.module.ts` | Binding IoC del repositorio técnico |
+| `narnia/src/infrastructure/ioc/usecases/usecases.types.ts` | Nuevo símbolo IoC para `GetTechnicalIntegrationCardsUseCase` |
+| `narnia/src/infrastructure/ioc/usecases/usecases.module.ts` | Binding IoC del nuevo use case |
+| `narnia/src/infrastructure/ioc/__tests__/container.test.ts` | Validación de resolución IoC para el nuevo use case |
+| `narnia/src/presentation/pages/HealthStatusPage.tsx` | Consumo del use case y envío de datos al layout |
+| `narnia/src/presentation/components/organisms/TechnicalHealthDashboardLayout.tsx` | Recepción de cards por props |
+| `narnia/src/presentation/components/organisms/IntegrationCardsGrid.tsx` | Render de SonarQube con métricas mock + estados visuales/fallback |
+| `narnia/src/presentation/components/organisms/__tests__/TechnicalHealthDashboardLayout.test.tsx` | Ajuste de test del layout con datos dinámicos |
+| `narnia/src/presentation/components/organisms/__tests__/IntegrationCardsGrid.test.tsx` | Nuevo test de métricas Sonar y estados visuales |
 
 ## ⚙️ Configuración y Entorno
 
 ### 🔑 Variables de Entorno
 
 | Variable | Proyecto | Descripción | Ejemplo |
-|---|---|---|---|
-| — | — | No se requieren nuevas variables | — |
+| --- | --- | --- | --- |
+| `AUTH_DISABLED` | `narnia` | Permite correr local sin Keycloak para validación | `true` |
 
 ### 📜 Scripts o Comandos Necesarios
 
 ```bash
-# No se requieren comandos post-merge
+# No aplica (sin pasos post-merge adicionales)
 ```
 
 ### 📦 Dependencias Nuevas
@@ -64,15 +60,11 @@ Implementa la tarjeta de SonarQube en el dashboard de salud técnica (`/dashboar
 ## ✅ Proceso de Revisión y Merge
 
 - Un revisor debe aprobar el PR antes del merge.
-- El código debe cumplir con buenas prácticas y estándares de calidad.
+- El código cumple arquitectura por capas: Presentation -> Domain <- Infrastructure.
 - No se permite merge directo sin revisión.
 
 ### Cobertura de Tests
 
 | Archivo | Stmts | Branch | Funcs | Lines |
-|---|---|---|---|---|
-| **Global** | 89.83% | 77.3% | 95.89% | 90.42% |
-| GetSonarQubeMetricsUseCase.ts | 100% | 100% | 100% | 100% |
-| MockSonarQubeRepository.ts | 100% | 100% | 100% | 100% |
-| SonarQubeCard.tsx | 100% | 100% | 100% | 100% |
-| IntegrationCardsGrid.tsx | 100% | 100% | 100% | 100% |
+| --- | --- | --- | --- | --- |
+| **Global** | **89.59%** | **76.19%** | **95.83%** | **90.18%** |

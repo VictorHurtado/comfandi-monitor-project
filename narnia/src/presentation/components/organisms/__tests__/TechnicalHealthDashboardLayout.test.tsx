@@ -1,39 +1,51 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import type { TechnicalIntegrationCard } from "@/domain/models/TechnicalIntegrationCard";
 import { TechnicalHealthDashboardLayout } from "@/presentation/components/organisms/TechnicalHealthDashboardLayout";
-import type { IntegrationHealth } from "@/domain/models/PlatformHealthStatus";
 
 jest.mock("next-auth/react", () => ({
   useSession: () => ({ data: null })
 }));
 
-jest.mock("@/presentation/hooks/useSonarCard", () => ({
-  useSonarCard: jest.fn()
-}));
-
-const { useSonarCard } = jest.requireMock("@/presentation/hooks/useSonarCard") as {
-  useSonarCard: jest.MockedFunction<() => { sonarData: IntegrationHealth | null; isLoading: boolean; error: string | null }>;
-};
-
-const mockSonarData: IntegrationHealth = {
-  provider: "sonar",
-  status: "warning",
-  message: "Quality gate: WARN.",
-  checkedAt: "2026-01-01T00:00:00.000Z",
-  sonarMetrics: {
-    qualityGateStatus: "WARN",
-    coverage: 72.5,
-    bugs: 3,
-    vulnerabilities: 1
+const integrationCardsMock: TechnicalIntegrationCard[] = [
+  {
+    provider: "sonar",
+    providerLabel: "SonarQube",
+    projectName: "Proyecto Alfa",
+    status: "healthy",
+    summary: "Análisis mock disponible para revisión rápida.",
+    sonarMetrics: {
+      qualityGateStatus: "PASSED",
+      coverage: 82.4,
+      bugs: 12,
+      vulnerabilities: 0
+    }
+  },
+  {
+    provider: "github",
+    providerLabel: "GitHub",
+    projectName: "Proyecto Alfa",
+    status: "warning",
+    summary: "PRs pendientes de revisión en el último ciclo."
+  },
+  {
+    provider: "sentry",
+    providerLabel: "Sentry",
+    projectName: "Proyecto Alfa",
+    status: "critical",
+    summary: "Incidencias críticas activas en monitoreo."
+  },
+  {
+    provider: "proteo",
+    providerLabel: "Proteo",
+    projectName: "Proyecto Alfa",
+    status: "unknown",
+    summary: "Integración aún sin datos reales conectados."
   }
-};
+];
 
 describe("TechnicalHealthDashboardLayout", () => {
-  beforeEach(() => {
-    useSonarCard.mockReturnValue({ sonarData: null, isLoading: false, error: null });
-  });
-
-  it("renders all integration provider cards", () => {
-    render(<TechnicalHealthDashboardLayout />);
+  it("renders integration cards with sonar metrics and collapsible sidebar", () => {
+    render(<TechnicalHealthDashboardLayout integrationCards={integrationCardsMock} />);
 
     expect(screen.getByLabelText("Navegación principal")).toBeInTheDocument();
     expect(screen.getByLabelText("Buscar métrica")).toBeInTheDocument();
@@ -41,55 +53,29 @@ describe("TechnicalHealthDashboardLayout", () => {
     expect(screen.getByText("GitHub")).toBeInTheDocument();
     expect(screen.getByText("Sentry")).toBeInTheDocument();
     expect(screen.getByText("Proteo")).toBeInTheDocument();
-  });
-
-  it("renders 3 static cards with 'Sin métricas conectadas'", () => {
-    render(<TechnicalHealthDashboardLayout />);
-    expect(screen.getAllByText("Sin métricas conectadas")).toHaveLength(3);
+    expect(screen.getAllByText("Proyecto: Proyecto Alfa")).toHaveLength(4);
+    expect(screen.getByText("PASSED")).toBeInTheDocument();
+    expect(screen.getByText("82.4%")).toBeInTheDocument();
+    expect(screen.getByText("Integración aún sin datos reales conectados.")).toBeInTheDocument();
     expect(screen.getByText("Sin alertas integradas")).toBeInTheDocument();
-  });
-
-  it("shows SonarQube metrics when hook returns data", () => {
-    useSonarCard.mockReturnValue({ sonarData: mockSonarData, isLoading: false, error: null });
-    render(<TechnicalHealthDashboardLayout />);
-
-    expect(screen.getByText("Quality Gate")).toBeInTheDocument();
-    expect(screen.getByText("WARN")).toBeInTheDocument();
-    expect(screen.getByText("72.5%")).toBeInTheDocument();
-    expect(screen.getByText("Atención")).toBeInTheDocument();
-  });
-
-  it("shows loading state for SonarQube when hook is loading", () => {
-    useSonarCard.mockReturnValue({ sonarData: null, isLoading: true, error: null });
-    render(<TechnicalHealthDashboardLayout />);
-
-    expect(screen.getByText("Cargando")).toBeInTheDocument();
-  });
-
-  it("shows error fallback when hook returns error", () => {
-    useSonarCard.mockReturnValue({
-      sonarData: null,
-      isLoading: false,
-      error: "No se pudo cargar los datos de SonarQube"
-    });
-    render(<TechnicalHealthDashboardLayout />);
-
-    expect(screen.getByText("No se pudo cargar los datos de SonarQube")).toBeInTheDocument();
-  });
-
-  it("renders collapsible sidebar", () => {
-    render(<TechnicalHealthDashboardLayout />);
 
     fireEvent.click(screen.getByLabelText("Colapsar sidebar"));
+
     expect(screen.getByLabelText("Expandir sidebar")).toBeInTheDocument();
   });
 
   it("keeps only available navigation enabled", () => {
-    render(<TechnicalHealthDashboardLayout />);
+    render(<TechnicalHealthDashboardLayout integrationCards={integrationCardsMock} />);
 
     expect(screen.getByRole("link", { name: /dashboard/i })).toHaveAttribute("href", "/dashboard/technical-health");
     expect(screen.getByRole("link", { name: /proyectos/i })).toHaveAttribute("href", "/project-selector");
     expect(screen.getByRole("button", { name: /alertas/i })).toBeDisabled();
     expect(screen.getByRole("button", { name: /configuración/i })).toBeDisabled();
+  });
+
+  it("renders SonarQube card test id in the dashboard", () => {
+    render(<TechnicalHealthDashboardLayout integrationCards={integrationCardsMock} />);
+
+    expect(screen.getByTestId("sonarqube-card")).toBeInTheDocument();
   });
 });

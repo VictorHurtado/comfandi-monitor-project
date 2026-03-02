@@ -1,10 +1,10 @@
 import { ContainerModule } from "inversify";
 import { GetPlatformHealthStatusUseCase } from "@/domain/usecases/GetPlatformHealthStatusUseCase";
 import { GetSonarQubeMetricsUseCase } from "@/domain/usecases/GetSonarQubeMetricsUseCase";
-import { GetSonarIntegrationUseCase } from "@/domain/usecases/GetSonarIntegrationUseCase";
 import type { IStatusRepository } from "@/domain/repositories/IStatusRepository";
 import type { ISonarQubeRepository } from "@/domain/repositories/ISonarQubeRepository";
-import type { ISonarRepository } from "@/domain/repositories/ISonarRepository";
+import { GetTechnicalIntegrationCardsUseCase } from "@/domain/usecases/GetTechnicalIntegrationCardsUseCase";
+import type { ITechnicalIntegrationRepository } from "@/domain/repositories/ITechnicalIntegrationRepository";
 import { REPOSITORY_TYPES } from "@/infrastructure/ioc/repositories/repositories.types";
 import { USECASE_TYPES } from "@/infrastructure/ioc/usecases/usecases.types";
 
@@ -23,10 +23,14 @@ export const usecasesModule = new ContainerModule(({ bind }) => {
       )
   );
 
-  bind<GetSonarIntegrationUseCase>(USECASE_TYPES.GetSonarIntegrationUseCase).toDynamicValue(
+  bind<GetTechnicalIntegrationCardsUseCase>(
+    USECASE_TYPES.GetTechnicalIntegrationCardsUseCase
+  ).toDynamicValue(
     (context) =>
-      new GetSonarIntegrationUseCase(
-        context.get<ISonarRepository>(REPOSITORY_TYPES.ISonarRepository)
+      new GetTechnicalIntegrationCardsUseCase(
+        context.get<ITechnicalIntegrationRepository>(
+          REPOSITORY_TYPES.ITechnicalIntegrationRepository
+        )
       )
   );
 });
