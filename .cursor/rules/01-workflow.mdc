@@ -11,6 +11,12 @@ alwaysApply: true
 2. Leer la HU asignada. Si no es clara: **DETENERSE Y PREGUNTAR**.
 3. Identificar el proyecto del monorepo (ver `skill-project-map`). Si no hay match: **PREGUNTAR**.
 4. Identificar capas afectadas, archivos a crear/modificar, contratos existentes.
+5. Ejecutar flujo obligatorio por etapas:
+   - Planner (refinar HU solo si no esta refinada)
+   - Implementation
+   - Tester
+   - Quality gates
+   - Delivery orchestrator
 
 ## Orden de implementacion
 
@@ -33,7 +39,9 @@ alwaysApply: true
 
 - Si el skill `06-pr-process` esta activo: el agente crea **DOS PRs** con `gh pr create` (uno a `development`, otro a `release`).
 - Si el skill NO esta activo: solo hacer commit + push. Preguntar al usuario el número del PR.
-- Validar SonarCloud **solo con `pullRequest=<PR_NUMBER>`** (NO local, NO rama).
+- SonarCloud:
+  - Si hay `SONAR_TOKEN` + `projectKey` + `PR_NUMBER`: validar **solo con `pullRequest=<PR_NUMBER>`** (NO local, NO rama).
+  - Si no hay configuracion SonarCloud: preguntar al usuario y marcar ese subpaso como opcional no configurado.
 - Ver detalle completo en `06-pr-process.mdc`.
 
 ## Definicion de done
@@ -41,5 +49,8 @@ alwaysApply: true
 - [ ] F1: tests >= 80% ejecutados
 - [ ] F2: build OK
 - [ ] TypeScript sin errores
-- [ ] Quality gate del PR: `status=OK`, `new_coverage >= 80`, 0 issues (excepto INFO)
-- [ ] Evidencias: PR URL + status=OK + new_coverage>=80
+- [ ] PR creado (si aplica proceso con PR)
+- [ ] Si SonarCloud esta configurado: quality gate del PR `status=OK`, `new_coverage >= 80`, 0 issues (excepto INFO)
+- [ ] Evidencias:
+  - Siempre: F1/F2 + commit/push + PR URL (si aplica)
+  - Condicional Sonar: `status=OK` + `new_coverage>=80` (cuando SonarCloud este configurado)

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dashboard de Salud Técnica General</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+<div class="flex min-h-screen">
+<!-- Side Navigation Bar -->
+<aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark flex flex-col shrink-0">
+<div class="p-6 flex flex-col gap-8 h-full">
+<!-- Brand -->
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-lg bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined">health_metrics</span>
+</div>
+<div>
+<h1 class="text-base font-bold leading-tight">Salud Técnica</h1>
+<p class="text-xs text-slate-500 dark:text-slate-400">Plataforma Interna</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex flex-col gap-1 flex-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary font-medium" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span>Proyectos</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">api</span>
+<span>Integraciones</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span>Alertas</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Configuración</span>
+</a>
+</nav>
+<!-- User Profile -->
+<div class="border-t border-slate-200 dark:border-slate-800 pt-6 mt-auto">
+<div class="flex items-center gap-3">
+<img alt="User" class="size-10 rounded-full" data-alt="Avatar of the project manager" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMbTtL2sLleWu0FN16_c12Yg_IMJi4GaRxR-YuT39QFhYIV_LLcVn_7W2RwDeulSlF5MDREEYzjiygMjn8VFy_iWKlpG2in5MGzz5bGdQ2YA2NOTSMQFpmFftaNZtrmXw3oouB0q_iX4jSxfDM8FFYPCnh_4BCV-z0kECsDsb5IvT_j_hbMIVtWg0JktqthZdDu2mxt7XKTAfLTn5XcTL8lw-Rd-vpSA-wgSpvYtcK_AiJjnZEYunAXT6uE73e5JidOB_QhYmqTw"/>
+<div class="overflow-hidden">
+<p class="text-sm font-semibold truncate">Juan Pérez</p>
+<p class="text-xs text-slate-500 dark:text-slate-400 truncate">Tech Lead</p>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col overflow-y-auto">
+<!-- Header -->
+<header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur px-8 flex items-center justify-between sticky top-0 z-10">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="text-slate-400">Proyectos</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="font-semibold">Proyecto Alfa</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="pl-10 pr-4 py-1.5 rounded-lg border-none bg-slate-100 dark:bg-slate-800 focus:ring-2 focus:ring-primary text-sm w-64" placeholder="Buscar métrica..." type="text"/>
+</div>
+<button class="size-10 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</header>
+<div class="p-8 space-y-8">
+<!-- Page Title & Time Filters -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h2 class="text-3xl font-black tracking-tight mb-2">Estado General: Proyecto Alfa</h2>
+<p class="text-slate-500 dark:text-slate-400">Métricas de calidad, estabilidad y seguridad sincronizadas.</p>
+</div>
+<div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+<button class="px-4 py-2 text-sm font-medium rounded-lg hover:bg-white dark:hover:bg-slate-700 transition-all">24h</button>
+<button class="px-4 py-2 text-sm font-medium rounded-lg bg-white dark:bg-slate-700 shadow-sm">7 días</button>
+<button class="px-4 py-2 text-sm font-medium rounded-lg hover:bg-white dark:hover:bg-slate-700 transition-all">30 días</button>
+<button class="px-4 py-2 text-sm font-medium rounded-lg hover:bg-white dark:hover:bg-slate-700 transition-all flex items-center gap-1">
+<span>Personalizado</span>
+<span class="material-symbols-outlined text-sm">calendar_month</span>
+</button>
+</div>
+</div>
+<!-- Main KPIs / Health Score History -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-xl">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-bold text-lg">Historial de Salud General</h3>
+<div class="flex items-center gap-2">
+<span class="size-3 rounded-full bg-primary"></span>
+<span class="text-xs font-medium uppercase tracking-wider">Health Index</span>
+</div>
+</div>
+<div class="h-48 flex items-end gap-1 w-full">
+<!-- Dummy Chart visualization -->
+<div class="flex-1 bg-primary/20 rounded-t-sm h-[70%]"></div>
+<div class="flex-1 bg-primary/20 rounded-t-sm h-[75%]"></div>
+<div class="flex-1 bg-primary/20 rounded-t-sm h-[65%]"></div>
+<div class="flex-1 bg-primary/20 rounded-t-sm h-[80%]"></div>
+<div class="flex-1 bg-primary/20 rounded-t-sm h-[85%]"></div>
+<div class="flex-1 bg-primary/20 rounded-t-sm h-[90%]"></div>
+<div class="flex-1 bg-primary rounded-t-sm h-[88%]"></div>
+</div>
+<div class="flex justify-between mt-4 text-xs text-slate-500">
+<span>Hace 7 días</span>
+<span>Hoy</span>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-xl flex flex-col justify-center items-center text-center">
+<p class="text-slate-500 dark:text-slate-400 font-medium mb-2">Technical Health Score</p>
+<div class="relative size-32 flex items-center justify-center">
+<svg class="size-full -rotate-90" viewbox="0 0 36 36">
+<circle class="text-slate-100 dark:text-slate-800" cx="18" cy="18" fill="none" r="16" stroke="currentColor" stroke-width="3"></circle>
+<circle class="text-primary" cx="18" cy="18" fill="none" r="16" stroke="currentColor" stroke-dasharray="100" stroke-dashoffset="12" stroke-width="3"></circle>
+</svg>
+<span class="absolute text-4xl font-black">88</span>
+</div>
+<p class="mt-4 text-emerald-500 font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                            +2.4% vs semana pasada
+                        </p>
+</div>
+</div>
+<!-- Integration Grids -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+<!-- SonarQube Card -->
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-xl">
+<div class="flex items-center gap-3 mb-4">
+<div class="size-8 rounded bg-orange-500/20 text-orange-500 flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">security</span>
+</div>
+<h4 class="font-bold">SonarQube</h4>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-sm text-slate-500">Quality Gate</span>
+<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-500 text-xs font-bold">PASSED</span>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div class="p-2 bg-slate-50 dark:bg-slate-800 rounded">
+<p class="text-xs text-slate-500">Bugs</p>
+<p class="text-lg font-bold">12</p>
+</div>
+<div class="p-2 bg-slate-50 dark:bg-slate-800 rounded">
+<p class="text-xs text-slate-500">Vulnerab.</p>
+<p class="text-lg font-bold">0</p>
+</div>
+</div>
+</div>
+</div>
+<!-- GitHub Card -->
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-xl">
+<div class="flex items-center gap-3 mb-4">
+<div class="size-8 rounded bg-slate-900 dark:bg-slate-700 text-white flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">commit</span>
+</div>
+<h4 class="font-bold">GitHub Activity</h4>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-sm text-slate-500">PRs Abiertas</span>
+<span class="font-bold">7</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-sm text-slate-500">Commits (7d)</span>
+<span class="font-bold">142</span>
+</div>
+<div class="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-2/3"></div>
+</div>
+</div>
+</div>
+<!-- Sentry Card -->
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-xl">
+<div class="flex items-center gap-3 mb-4">
+<div class="size-8 rounded bg-red-500/20 text-red-500 flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">error</span>
+</div>
+<h4 class="font-bold">Sentry Errors</h4>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-sm text-slate-500">Tasa de Errores</span>
+<span class="font-bold text-red-500">0.82%</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-sm text-slate-500">Incid. Críticos</span>
+<span class="px-2 py-0.5 rounded-full bg-red-500 text-white text-xs font-bold">2</span>
+</div>
+<p class="text-[10px] text-slate-400">Último evento hace 4 min</p>
+</div>
+</div>
+<!-- Proteo Card -->
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-xl">
+<div class="flex items-center gap-3 mb-4">
+<div class="size-8 rounded bg-blue-500/20 text-blue-500 flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">verified</span>
+</div>
+<h4 class="font-bold">Proteo Compliance</h4>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-sm text-slate-500">Estándares</span>
+<span class="font-bold">94%</span>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-[10px] uppercase font-bold text-slate-400">
+<span>Cumplimiento</span>
+<span>Goal: 95%</span>
+</div>
+<div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500 w-[94%]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Alerts & Activity -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+<section class="space-y-4">
+<h3 class="text-xl font-bold">Alertas Recientes</h3>
+<div class="space-y-3">
+<div class="flex items-start gap-4 p-4 bg-red-500/5 border-l-4 border-red-500 rounded-r-lg">
+<span class="material-symbols-outlined text-red-500 mt-0.5">warning</span>
+<div class="flex-1">
+<h5 class="font-bold text-sm">Sentry: Error Crítico en Checkout</h5>
+<p class="text-sm text-slate-500 dark:text-slate-400">Se detectó un pico de errores 500 en el endpoint /api/v1/checkout.</p>
+<span class="text-[10px] font-medium text-slate-400 uppercase mt-2 inline-block">Hace 15 minutos</span>
+</div>
+<button class="text-primary text-xs font-bold hover:underline">Resolver</button>
+</div>
+<div class="flex items-start gap-4 p-4 bg-orange-500/5 border-l-4 border-orange-500 rounded-r-lg">
+<span class="material-symbols-outlined text-orange-500 mt-0.5">info</span>
+<div class="flex-1">
+<h5 class="font-bold text-sm">GitHub: PR #452 requiere revisión</h5>
+<p class="text-sm text-slate-500 dark:text-slate-400">Pull Request "Refactor auth logic" bloqueada por tests fallidos.</p>
+<span class="text-[10px] font-medium text-slate-400 uppercase mt-2 inline-block">Hace 2 horas</span>
+</div>
+<button class="text-primary text-xs font-bold hover:underline">Ver PR</button>
+</div>
+<div class="flex items-start gap-4 p-4 bg-primary/5 border-l-4 border-primary rounded-r-lg">
+<span class="material-symbols-outlined text-primary mt-0.5">update</span>
+<div class="flex-1">
+<h5 class="font-bold text-sm">SonarQube: Análisis completado</h5>
+<p class="text-sm text-slate-500 dark:text-slate-400">Nueva rama 'feature/payment-v2' analizada satisfactoriamente.</p>
+<span class="text-[10px] font-medium text-slate-400 uppercase mt-2 inline-block">Hace 5 horas</span>
+</div>
+<button class="text-primary text-xs font-bold hover:underline">Detalles</button>
+</div>
+</div>
+</section>
+<section class="space-y-4">
+<h3 class="text-xl font-bold">Resumen de Cumplimiento</h3>
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+<table class="w-full text-left">
+<thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+<tr>
+<th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase">Métrica</th>
+<th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase">Estado</th>
+<th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase">Valor</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<tr>
+<td class="px-6 py-4 text-sm">Cobertura de Código</td>
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-emerald-500 text-sm">check_circle</span>
+</td>
+<td class="px-6 py-4 text-sm font-bold">82.4%</td>
+</tr>
+<tr>
+<td class="px-6 py-4 text-sm">Complejidad Ciclomática</td>
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-orange-500 text-sm">trending_up</span>
+</td>
+<td class="px-6 py-4 text-sm font-bold">14.2</td>
+</tr>
+<tr>
+<td class="px-6 py-4 text-sm">Deuda Técnica</td>
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-emerald-500 text-sm">check_circle</span>
+</td>
+<td class="px-6 py-4 text-sm font-bold">4.2d</td>
+</tr>
+<tr>
+<td class="px-6 py-4 text-sm">Hotspots de Seguridad</td>
+<td class="px-6 py-4">
+<span class="material-symbols-outlined text-red-500 text-sm">error</span>
+</td>
+<td class="px-6 py-4 text-sm font-bold text-red-500">3 detectados</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="flex justify-end">
+<button class="text-primary text-sm font-bold hover:gap-2 flex items-center transition-all">
+<span>Ver reporte detallado</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</section>
+</div>
+</div>
+</main>
+</div>
+</body></html>

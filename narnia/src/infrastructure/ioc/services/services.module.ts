@@ -1,0 +1,20 @@
+import { ContainerModule } from "inversify";
+import type { AxiosInstance } from "axios";
+import { axiosInstance } from "@/infrastructure/network/axiosInstance";
+import { ExternalApiService } from "@/infrastructure/services/ExternalApiService";
+import { KeycloakService } from "@/infrastructure/services/KeycloakService";
+import { SERVICE_TYPES } from "@/infrastructure/ioc/services/services.types";
+
+export const servicesModule = new ContainerModule(({ bind }) => {
+  bind<AxiosInstance>(SERVICE_TYPES.AxiosInstance).toConstantValue(axiosInstance);
+
+  bind<ExternalApiService>(SERVICE_TYPES.ExternalApiService)
+    .toDynamicValue((context) =>
+      new ExternalApiService(context.get<AxiosInstance>(SERVICE_TYPES.AxiosInstance))
+    )
+    .inSingletonScope();
+
+  bind<KeycloakService>(SERVICE_TYPES.KeycloakService)
+    .toDynamicValue(() => new KeycloakService())
+    .inSingletonScope();
+});
