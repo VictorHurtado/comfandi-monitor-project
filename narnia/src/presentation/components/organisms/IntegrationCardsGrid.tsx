@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
-import { GitBranch, ShieldCheck, Siren, Workflow } from "lucide-react";
+import { GitBranch, Siren, Workflow } from "lucide-react";
+import { SonarIntegrationCard } from "@/presentation/components/molecules/SonarIntegrationCard";
 
 interface IntegrationCard {
   readonly id: string;
@@ -9,12 +10,6 @@ interface IntegrationCard {
 }
 
 const integrationCards: readonly IntegrationCard[] = [
-  {
-    id: "sonar",
-    title: "SonarQube",
-    workshopOwner: "Equipo 1",
-    icon: ShieldCheck
-  },
   {
     id: "github",
     title: "GitHub",
@@ -38,6 +33,7 @@ const integrationCards: readonly IntegrationCard[] = [
 export function IntegrationCardsGrid() {
   return (
     <section aria-label="Integraciones técnicas" className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+      <SonarIntegrationCard />
       {integrationCards.map((card) => {
         const Icon = card.icon;
 
@@ -50,11 +46,15 @@ export function IntegrationCardsGrid() {
                 </div>
                 <h3 className="text-h3 text-slate-100">{card.title}</h3>
               </div>
-              <span className="rounded-full bg-slate-800 px-2 py-1 text-caption uppercase text-slate-300">pendiente</span>
+              <span className="rounded-full bg-slate-800 px-2 py-1 text-caption uppercase text-slate-300">
+                pendiente
+              </span>
             </header>
 
             <div className="space-y-3">
-              <p className="text-body text-slate-400">Módulo listo para conectar datos reales en el taller.</p>
+              <p className="text-body text-slate-400">
+                Módulo listo para conectar datos reales en el taller.
+              </p>
               <div className="rounded-input border border-dashed border-slate-700 bg-slate-950/40 p-3">
                 <p className="text-caption uppercase text-slate-500">Responsable</p>
                 <p className="text-button text-slate-100">{card.workshopOwner}</p>

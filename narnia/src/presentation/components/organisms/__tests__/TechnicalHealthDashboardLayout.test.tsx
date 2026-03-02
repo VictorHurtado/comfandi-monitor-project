@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { TechnicalHealthDashboardLayout } from "@/presentation/components/organisms/TechnicalHealthDashboardLayout";
 
 jest.mock("next-auth/react", () => ({
@@ -6,7 +6,7 @@ jest.mock("next-auth/react", () => ({
 }));
 
 describe("TechnicalHealthDashboardLayout", () => {
-  it("renders empty integration-ready sections and collapsible sidebar", () => {
+  it("renders empty integration-ready sections and collapsible sidebar", async () => {
     render(<TechnicalHealthDashboardLayout />);
 
     expect(screen.getByLabelText("Navegación principal")).toBeInTheDocument();
@@ -15,7 +15,11 @@ describe("TechnicalHealthDashboardLayout", () => {
     expect(screen.getByText("GitHub")).toBeInTheDocument();
     expect(screen.getByText("Sentry")).toBeInTheDocument();
     expect(screen.getByText("Proteo")).toBeInTheDocument();
-    expect(screen.getAllByText("Sin métricas conectadas")).toHaveLength(4);
+
+    await waitFor(() => {
+      expect(screen.getByText("Proyecto Alfa")).toBeInTheDocument();
+    });
+    expect(screen.getAllByText("Sin métricas conectadas")).toHaveLength(3);
     expect(screen.getByText("Sin alertas integradas")).toBeInTheDocument();
 
     fireEvent.click(screen.getByLabelText("Colapsar sidebar"));

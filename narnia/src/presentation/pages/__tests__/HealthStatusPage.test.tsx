@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { HealthStatusPage } from "@/presentation/pages/HealthStatusPage";
 
 jest.mock("next-auth/react", () => ({
@@ -16,5 +16,9 @@ describe("HealthStatusPage", () => {
     expect(screen.getByLabelText("Integraciones técnicas")).toBeInTheDocument();
     expect(screen.getByText("Alertas recientes")).toBeInTheDocument();
     expect(screen.getByText("Resumen de cumplimiento")).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.getByText("Proyecto Alfa")).toBeInTheDocument();
+    });
   });
 });
