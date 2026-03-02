@@ -19,6 +19,17 @@ describe("auth-options", () => {
     expect(isKeycloakConfigured()).toBe(true);
   });
 
+  it("disables auth when AUTH_DISABLED=true in development", async () => {
+    process.env.KEYCLOAK_ISSUER = "https://issuer.example.com/realms/narnia";
+    process.env.KEYCLOAK_CLIENT_ID = "narnia-client";
+    process.env.KEYCLOAK_CLIENT_SECRET = "secret";
+    process.env.AUTH_DISABLED = "true";
+    process.env.NODE_ENV = "development";
+
+    const { isAuthEnabled } = await import("@/infrastructure/config/auth-options");
+    expect(isAuthEnabled()).toBe(false);
+  });
+
   it("returns refresh error when token or env is missing", async () => {
     const { refreshAccessToken } = await import("@/infrastructure/config/auth-options");
     const result = await refreshAccessToken({});
@@ -41,7 +52,7 @@ describe("auth-options", () => {
       })
     });
 
-    global.fetch = fetchMock as unknown as typeof fetch;
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
 
     const { refreshAccessToken } = await import("@/infrastructure/config/auth-options");
     const result = await refreshAccessToken({

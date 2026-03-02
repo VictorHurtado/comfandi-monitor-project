@@ -8,6 +8,10 @@ import {
 export class KeycloakService {
   private readonly environment = getEnvironment();
 
+  isAuthDisabled(): boolean {
+    return this.environment.authDisabled;
+  }
+
   isConfigured(): boolean {
     return Boolean(
       this.environment.keycloakIssuer &&
@@ -29,6 +33,10 @@ export class KeycloakService {
   }
 
   async validateAccessToken(accessToken: string): Promise<void> {
+    if (this.isAuthDisabled()) {
+      return;
+    }
+
     if (!this.isConfigured()) {
       throw new InternalServerError("Keycloak authentication is not configured");
     }
