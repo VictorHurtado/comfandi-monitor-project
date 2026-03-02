@@ -1,5 +1,5 @@
 
-Actúa como agente de implementación end-to-end para la HU `HU-005`.
+Actúa como agente de implementación end-to-end para la HU `HU-004`.
  
 ## Contexto obligatorio
  
@@ -43,10 +43,10 @@ Actúa como agente de implementación end-to-end para la HU `HU-005`.
   - `.cursor/rules/06-pr-process.mdc`
 - **PROHIBIDO** hacer commit/push directo a `development`, `release` o  `main` .
 - Rama de trabajo obligatoria:
-  - `feature/HU-005` creada desde `release`.
+  - `feature/HU-004` creada desde `release`.
 - Flujo obligatorio:
-  1. `feature/HU-005` -> PR a `development`
-  2. `feature/HU-005` -> PR a `release`
+  1. `feature/HU-004` -> PR a `development`
+  2. `feature/HU-004` -> PR a `release`
 - Crea PRs con `gh pr create` y reporta las 2 URLs.
  
 ## Guardrails de seguridad
@@ -60,7 +60,7 @@ Actúa como agente de implementación end-to-end para la HU `HU-005`.
 No cierres hasta entregar:
 - Evidencia F1 (coverage >= 80%).
 - Evidencia F2 (build OK).
-- Commit + push en `feature/HU-005`.
+- Commit + push en `feature/HU-004`.
 - URL PR a `development`.
 - URL PR a `release`.
 - Si SonarCloud está configurado: `status=OK`, `new_coverage>=80`, issues 0 (excepto INFO) por `pullRequest=<PR_NUMBER>`.
@@ -69,6 +69,6 @@ No cierres hasta entregar:
  
 ## Plantilla rápida de invocación
  
-Implementa la HU `HU-005` usando `docs/close/hus/<HU_FILE>.md` y ejecuta el proceso completo por fases (Planner -> Implementation -> Tester -> Quality gates -> Delivery), activando PR flow con `.cursor/rules/06-pr-process.mdc`.
+Implementa la HU `HU-004` usando `docs/close/hus/<HU_FILE>.md` y ejecuta el proceso completo por fases (Planner -> Implementation -> Tester -> Quality gates -> Delivery), activando PR flow con `.cursor/rules/06-pr-process.mdc`.
  
 Recuerda: prohibido push directo a `development`/`release`; trabaja en `feature/<ID-HU>` y crea dos PRs con `gh` (a `development` y `release`).
