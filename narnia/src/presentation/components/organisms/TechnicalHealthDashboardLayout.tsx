@@ -5,8 +5,11 @@ import { ComplianceSummaryTable } from "@/presentation/components/organisms/Comp
 import { IntegrationCardsGrid } from "@/presentation/components/organisms/IntegrationCardsGrid";
 import { RecentAlertsPanel } from "@/presentation/components/organisms/RecentAlertsPanel";
 import { AppSidebarLayout } from "@/presentation/components/templates/AppSidebarLayout";
+import { useSonarCard } from "@/presentation/hooks/useSonarCard";
 
 export function TechnicalHealthDashboardLayout() {
+  const { sonarData, isLoading, error } = useSonarCard();
+
   return (
     <AppSidebarLayout
       activeSection="dashboard"
@@ -54,7 +57,11 @@ export function TechnicalHealthDashboardLayout() {
         </article>
       </section>
 
-      <IntegrationCardsGrid />
+      <IntegrationCardsGrid
+        sonarIntegration={sonarData}
+        sonarIsLoading={isLoading}
+        sonarError={error}
+      />
 
       <section className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <RecentAlertsPanel />
