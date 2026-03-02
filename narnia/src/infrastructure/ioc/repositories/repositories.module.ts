@@ -1,6 +1,8 @@
 import { ContainerModule } from "inversify";
 import type { IStatusRepository } from "@/domain/repositories/IStatusRepository";
+import type { ISonarQubeRepository } from "@/domain/repositories/ISonarQubeRepository";
 import { StatusRepository } from "@/infrastructure/repositories/StatusRepository";
+import { MockSonarQubeRepository } from "@/infrastructure/repositories/MockSonarQubeRepository";
 import { ExternalApiService } from "@/infrastructure/services/ExternalApiService";
 import { KeycloakService } from "@/infrastructure/services/KeycloakService";
 import { REPOSITORY_TYPES } from "@/infrastructure/ioc/repositories/repositories.types";
@@ -15,5 +17,9 @@ export const repositoriesModule = new ContainerModule(({ bind }) => {
           context.get<KeycloakService>(SERVICE_TYPES.KeycloakService)
         )
     )
+    .inSingletonScope();
+
+  bind<ISonarQubeRepository>(REPOSITORY_TYPES.ISonarQubeRepository)
+    .toDynamicValue(() => new MockSonarQubeRepository())
     .inSingletonScope();
 });
