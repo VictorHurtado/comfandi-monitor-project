@@ -1,6 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import { HealthStatusPage } from "@/presentation/pages/HealthStatusPage";
 
+jest.mock("next-auth/react", () => ({
+  useSession: () => ({ data: null })
+}));
+
 describe("HealthStatusPage", () => {
   it("renders technical dashboard shell sections", async () => {
     const ui = await HealthStatusPage();
