@@ -1,7 +1,11 @@
+import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
+
 type ProjectHealth = "healthy" | "warning" | "critical";
 
 export interface ProjectCardModel {
   id: string;
+  href?: string;
   name: string;
   description: string;
   updatedAtLabel: string;
@@ -13,33 +17,32 @@ export interface ProjectCardModel {
 }
 
 interface ProjectCardProps {
-  project: ProjectCardModel;
+  readonly project: ProjectCardModel;
 }
 
 const healthStyles: Record<ProjectHealth, { chip: string; dot: string; gradient: string }> = {
   healthy: {
-    chip: "bg-emerald-100 text-emerald-700",
+    chip: "bg-emerald-900/50 text-emerald-300",
     dot: "bg-emerald-500",
-    gradient: "from-brand-200 to-emerald-300"
+    gradient: "from-sky-500/30 to-emerald-500/30"
   },
   warning: {
-    chip: "bg-amber-100 text-amber-700",
+    chip: "bg-amber-900/50 text-amber-300",
     dot: "bg-amber-500",
-    gradient: "from-brand-200 to-amber-300"
+    gradient: "from-sky-500/30 to-amber-500/30"
   },
   critical: {
-    chip: "bg-rose-100 text-rose-700",
+    chip: "bg-rose-900/50 text-rose-300",
     dot: "bg-rose-500",
-    gradient: "from-brand-200 to-rose-300"
+    gradient: "from-sky-500/30 to-rose-500/30"
   }
 };
 
 export function ProjectCard({ project }: ProjectCardProps) {
   const style = healthStyles[project.health];
-
-  return (
-    <article className="ui-card group overflow-hidden transition-all duration-200 hover:border-brand-300 hover:shadow-interactive">
-      <div className={`relative h-40 bg-gradient-to-br ${style.gradient}`}>
+  const cardContent = (
+    <article className="group overflow-hidden rounded-2xl border border-slate-700 bg-slate-800/95 transition-all duration-300 hover:border-[#137fec]/60 hover:shadow-xl">
+      <div className={`relative h-40 bg-slate-900 bg-gradient-to-br ${style.gradient}`}>
         <div className="absolute right-4 top-4">
           <span
             className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-caption font-semibold ${style.chip}`}
@@ -52,7 +55,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
           {project.teamMembers.map((member) => (
             <span
               key={`${project.id}-${member}`}
-              className="inline-flex size-8 items-center justify-center rounded-full border-2 border-brand-surface bg-brand-100 text-caption font-semibold text-brand-700"
+              className="inline-flex size-8 items-center justify-center rounded-full border-2 border-slate-800 bg-slate-700 text-caption font-semibold text-slate-200"
             >
               {member}
             </span>
@@ -62,19 +65,34 @@ export function ProjectCard({ project }: ProjectCardProps) {
 
       <div className="p-5">
         <header className="mb-2 flex items-start justify-between gap-3">
-          <h3 className="text-h3 text-brand-900">{project.name}</h3>
-          <span aria-hidden className="text-brand-600 transition-colors group-hover:text-brand-800">{"->"}</span>
+          <h3 className="text-h3 text-white">{project.name}</h3>
+          <span
+            aria-hidden
+            className="inline-flex rounded-full p-1 text-slate-400 transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:bg-slate-700 group-hover:text-[#137fec]"
+          >
+            <ArrowUpRight size={16} strokeWidth={2.25} />
+          </span>
         </header>
 
-        <p className="mb-4 min-h-12 text-body text-brand-muted">{project.description}</p>
+        <p className="mb-4 min-h-12 text-body text-slate-400">{project.description}</p>
 
-        <footer className="flex items-center justify-between border-t border-brand-100 pt-4">
-          <span className="text-caption text-brand-muted">Actualizado {project.updatedAtLabel}</span>
-          <span className="rounded-full bg-brand-100 px-2 py-1 text-caption font-semibold text-brand-800">
+        <footer className="flex items-center justify-between border-t border-slate-700 pt-4">
+          <span className="text-caption text-slate-500">Actualizado {project.updatedAtLabel}</span>
+          <span className="rounded-full bg-[#137fec]/15 px-2 py-1 text-caption font-semibold text-[#60a5fa]">
             {project.area}
           </span>
         </footer>
       </div>
     </article>
+  );
+
+  if (!project.href) {
+    return cardContent;
+  }
+
+  return (
+    <Link aria-label={`Abrir dashboard de ${project.name}`} className="block" href={project.href}>
+      {cardContent}
+    </Link>
   );
 }

@@ -1,12 +1,12 @@
 "use client";
 
-import Image from "next/image";
 import { useSession } from "next-auth/react";
+import { FolderPlus, Plus } from "lucide-react";
 import { ProjectCard, type ProjectCardModel } from "@/presentation/components/molecules/ProjectCard";
 import { ProjectFilters } from "@/presentation/components/molecules/ProjectFilters";
 
 interface ProjectSelectorLayoutProps {
-  projects: ProjectListItem[];
+  readonly projects: readonly ProjectListItem[];
 }
 
 export interface ProjectListItem extends ProjectCardModel {
@@ -19,52 +19,51 @@ export interface ProjectListItem extends ProjectCardModel {
 export function ProjectSelectorLayout({ projects }: ProjectSelectorLayoutProps) {
   const { data: session } = useSession();
   const displayName = session?.user?.name ?? "Usuario";
-  const displayEmail = session?.user?.email ?? "cuenta.keycloak@comfandi.com.co";
+  const displayEmail = session?.user?.email ?? "usuario@comfandi.com.co";
   const initials =
     displayName
       .split(" ")
       .filter(Boolean)
       .slice(0, 2)
       .map((word) => word[0]?.toUpperCase())
-      .join("") || "KC";
+      .join("") || "US";
 
   return (
-    <div className="min-h-screen bg-brand-canvas">
-      <header className="sticky top-0 z-10 border-b border-brand-border bg-brand-surface">
+    <div className="flex min-h-screen flex-col bg-[#101922] text-slate-100">
+      <header className="sticky top-0 z-10 border-b border-slate-800 bg-[#101922]/95 backdrop-blur">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3">
-              <Image
-                alt="Logo Comfandi"
-                className="h-10 w-10 rounded-button border border-brand-border object-cover"
-                height={40}
-                src="/comfandi-renueva-su-identidad-como-simbolo-de-su-evolucion.webp"
-                width={40}
-              />
-              <p className="text-h3 text-brand-900">Comfandi TechHealth</p>
+              <div
+                aria-hidden
+                className="inline-flex h-10 w-10 items-center justify-center rounded-button border border-[#137fec]/70 bg-[#137fec] text-h3 font-bold text-white"
+              >
+                C
+              </div>
+              <p className="text-h3 text-white">Comfandi TechHealth</p>
             </div>
             <nav className="hidden items-center gap-6 md:flex">
-              <span className="text-button text-brand-700">Proyectos</span>
-              <span className="text-button text-brand-muted">Configuracion</span>
+              <span className="text-button text-[#137fec]">Proyectos</span>
+              <span className="text-button text-slate-400">Configuracion</span>
             </nav>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="hidden text-right sm:block">
-              <p className="text-caption font-semibold text-brand-900">{displayEmail}</p>
-              <p className="text-caption text-brand-muted">Cuenta Keycloak</p>
+              <p className="text-caption font-semibold text-slate-100">{displayEmail}</p>
+              <p className="text-caption text-slate-400">Cuenta plataforma</p>
             </div>
-            <div className="inline-flex size-10 items-center justify-center rounded-full bg-brand-100 text-button text-brand-800">
+            <div className="inline-flex size-10 items-center justify-center rounded-full border border-slate-700 bg-slate-800 text-button text-slate-200">
               {initials}
             </div>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-7xl px-6 py-8">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-8">
         <section className="mb-10">
-          <h1 className="mb-2 text-h1 text-brand-900">Seleccionar Proyecto</h1>
-          <p className="max-w-3xl text-body text-brand-muted">
+          <h1 className="mb-2 text-h1 text-white">Seleccionar Proyecto</h1>
+          <p className="max-w-3xl text-body text-slate-400">
             Bienvenido, {displayName}. Selecciona un proyecto para monitorear salud tecnica y avance operativo.
           </p>
         </section>
@@ -75,46 +74,27 @@ export function ProjectSelectorLayout({ projects }: ProjectSelectorLayoutProps) 
           {projects.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
-        </section>
-
-        <section className="ui-card overflow-hidden">
-          <header className="border-b border-brand-border px-5 py-4">
-            <h2 className="text-h3 text-brand-900">Listado mock de proyectos</h2>
-          </header>
-          <div className="overflow-x-auto">
-            <table className="w-full table-auto">
-              <thead className="bg-brand-50 text-left">
-                <tr>
-                  <th className="px-5 py-3 text-caption text-brand-800">Proyecto</th>
-                  <th className="px-5 py-3 text-caption text-brand-800">Owner</th>
-                  <th className="px-5 py-3 text-caption text-brand-800">Unidad</th>
-                  <th className="px-5 py-3 text-caption text-brand-800">Stack</th>
-                  <th className="px-5 py-3 text-caption text-brand-800">Estado</th>
-                </tr>
-              </thead>
-              <tbody>
-                {projects.map((project) => (
-                  <tr key={`row-${project.id}`} className="border-t border-brand-border">
-                    <td className="px-5 py-4 text-body font-semibold text-brand-900">{project.name}</td>
-                    <td className="break-all px-5 py-4 text-caption text-brand-muted">{project.owner}</td>
-                    <td className="px-5 py-4 text-caption text-brand-muted">{project.unit}</td>
-                    <td className="px-5 py-4 text-caption text-brand-muted">{project.stack}</td>
-                    <td className="px-5 py-4">
-                      <span className="rounded-full bg-brand-100 px-3 py-1 text-caption font-semibold text-brand-800">
-                        {project.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <button
+            className="flex min-h-[320px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-700 bg-slate-900/50 p-6 text-center transition-colors hover:border-[#137fec] hover:bg-[#137fec]/10"
+            type="button"
+          >
+            <span className="mb-4 inline-flex size-14 items-center justify-center rounded-full border-2 border-dashed border-slate-600 text-slate-300">
+              <Plus aria-hidden size={24} strokeWidth={2.5} />
+            </span>
+            <p className="inline-flex items-center gap-2 text-h3 text-white">
+              <FolderPlus aria-hidden size={18} strokeWidth={2.25} />
+              Agregar nuevo proyecto
+            </p>
+            <p className="mt-2 max-w-xs text-body text-slate-400">
+              Crea un nuevo proyecto para incluirlo en el monitoreo de salud tecnica.
+            </p>
+          </button>
         </section>
       </main>
 
-      <footer className="mt-12 border-t border-brand-border bg-brand-surface">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-6 py-6 text-caption text-brand-muted">
-          <p>(c) 2024 Comfandi Monitor</p>
+      <footer className="border-t border-slate-800 bg-[#101922]/95 backdrop-blur">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-6 py-4 text-caption text-slate-500">
+          <p>(c) 2026 Comfandi TechHealth</p>
           <span>Selector de proyectos</span>
         </div>
       </footer>

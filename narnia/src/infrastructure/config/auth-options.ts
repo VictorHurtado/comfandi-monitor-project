@@ -1,6 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import KeycloakProvider from "next-auth/providers/keycloak";
+import { getEnvironment } from "@/infrastructure/config/environment";
 
 type AuthToken = JWT & {
   access_token?: string;
@@ -19,6 +20,10 @@ const getKeycloakConfig = () => ({
 export const isKeycloakConfigured = (): boolean => {
   const { issuer, clientId, clientSecret } = getKeycloakConfig();
   return Boolean(issuer && clientId && clientSecret);
+};
+
+export const isAuthEnabled = (): boolean => {
+  return isKeycloakConfigured() && !getEnvironment().authDisabled;
 };
 
 export async function refreshAccessToken(token: AuthToken): Promise<AuthToken> {
@@ -62,7 +67,7 @@ export async function refreshAccessToken(token: AuthToken): Promise<AuthToken> {
 }
 
 const keycloakProvider = (() => {
-  if (!isKeycloakConfigured()) {
+  if (!isAuthEnabled()) {
     return null;
   }
 
@@ -75,12 +80,13 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt"
   },
-  pages: {
-    signIn: "/api/auth/signin/keycloak"
-  },
   callbacks: {
     async jwt({ token, account }) {
       const currentToken = token as AuthToken;
+
+      if (!isAuthEnabled()) {
+        return currentToken;
+      }
 
       if (account) {
         return {
