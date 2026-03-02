@@ -1,29 +1,12 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { HealthStatusPage } from "@/presentation/pages/HealthStatusPage";
 
 jest.mock("next-auth/react", () => ({
   useSession: () => ({ data: null })
 }));
 
-const mockExecute = jest.fn().mockResolvedValue({
-  projectName: "Proyecto Alfa",
-  status: "ok",
-  metrics: {
-    qualityGateStatus: "passed",
-    coverage: 82.4,
-    bugs: 12,
-    vulnerabilities: 0
-  },
-  lastCheckedAt: "2026-01-01T00:00:00.000Z"
-});
-
-jest.mock("@/infrastructure/ioc", () => ({
-  container: {
-    get: () => ({ execute: mockExecute })
-  },
-  USECASE_TYPES: {
-    GetSonarQubeMetricsUseCase: Symbol.for("GetSonarQubeMetricsUseCase")
-  }
+jest.mock("@/presentation/hooks/useSonarCard", () => ({
+  useSonarCard: () => ({ sonarData: null, isLoading: false, error: null })
 }));
 
 describe("HealthStatusPage", () => {
@@ -37,9 +20,6 @@ describe("HealthStatusPage", () => {
     expect(screen.getByLabelText("Integraciones técnicas")).toBeInTheDocument();
     expect(screen.getByText("Alertas recientes")).toBeInTheDocument();
     expect(screen.getByText("Resumen de cumplimiento")).toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(screen.getByTestId("sonarqube-card")).toBeInTheDocument();
-    });
+    expect(screen.getByText("SonarQube")).toBeInTheDocument();
   });
 });
