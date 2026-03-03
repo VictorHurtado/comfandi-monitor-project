@@ -81,4 +81,4 @@ npm run build
 
 | Archivo | Stmts | Branch | Funcs | Lines |
 | --- | --- | --- | --- | --- |
-| **Global** | 89.78% | 77.36% | 96.59% | 90.22% |
+| **Global** | 87.26% | 72.40% | 96.15% | 87.44% |
