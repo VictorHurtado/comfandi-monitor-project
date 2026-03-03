@@ -23,7 +23,7 @@ export class JiraMetricsService {
     }
 
     try {
-      const response = await this.http.get<JiraMetricsDto>("/jira/metrics", {
+      const response = await this.http.get<JiraMetricsDto>("/api/v1/jira/metrics", {
         params: { projectId: normalizedProjectId }
       });
 

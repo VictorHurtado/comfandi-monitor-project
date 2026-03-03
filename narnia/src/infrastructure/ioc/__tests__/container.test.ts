@@ -23,5 +23,6 @@ describe("IoC container", () => {
     expect(String(REPOSITORY_TYPES.IJiraMetricsRepository)).toContain("IJiraMetricsRepository");
     expect(String(SERVICE_TYPES.ExternalApiService)).toContain("ExternalApiService");
     expect(String(SERVICE_TYPES.JiraMetricsService)).toContain("JiraMetricsService");
+    expect(String(SERVICE_TYPES.JiraExternalApiService)).toContain("JiraExternalApiService");
   });
 });

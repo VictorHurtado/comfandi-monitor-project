@@ -21,7 +21,7 @@ describe("JiraMetricsService", () => {
     const service = new JiraMetricsService(http as never);
     const result = await service.getProjectMetrics("  afiliaciones ");
 
-    expect(http.get).toHaveBeenCalledWith("/jira/metrics", {
+    expect(http.get).toHaveBeenCalledWith("/api/v1/jira/metrics", {
       params: {
         projectId: "afiliaciones"
       }

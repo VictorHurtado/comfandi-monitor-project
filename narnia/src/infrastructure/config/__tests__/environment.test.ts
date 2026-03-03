@@ -32,6 +32,21 @@ describe("environment", () => {
     expect(env.keycloakClientSecret).toBe("secret");
   });
 
+  it("reads jira credentials and mapping from env", async () => {
+    process.env.JIRA_BASE_URL = "https://acme.atlassian.net";
+    process.env.EMAIL_API_JIRA = "jira.user@acme.com";
+    process.env.TOKEN_API_JIRA = "jira-token";
+    process.env.JIRA_PROJECT_KEY_MAP = "{\"afiliaciones\":\"AFI\"}";
+
+    const { getEnvironment } = await import("@/infrastructure/config/environment");
+    const env = getEnvironment();
+
+    expect(env.jiraBaseUrl).toBe("https://acme.atlassian.net");
+    expect(env.jiraApiEmail).toBe("jira.user@acme.com");
+    expect(env.jiraApiToken).toBe("jira-token");
+    expect(env.jiraProjectKeyMap).toBe("{\"afiliaciones\":\"AFI\"}");
+  });
+
   it("enables authDisabled when AUTH_DISABLED=true outside production", async () => {
     process.env.AUTH_DISABLED = "true";
     process.env.NODE_ENV = "development";
