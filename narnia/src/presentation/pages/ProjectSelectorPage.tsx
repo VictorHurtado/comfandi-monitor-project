@@ -4,7 +4,7 @@ import type { ProjectListItem } from "@/presentation/components/organisms/Projec
 const projectMocks: ProjectListItem[] = [
   {
     id: "afiliaciones",
-    href: "/dashboard/technical-health",
+    href: "/dashboard/technical-health/afiliaciones",
     name: "Afiliaciones",
     description: "Plataforma para la gestion integral del proceso de afiliaciones.",
     updatedAtLabel: "hace 10m",

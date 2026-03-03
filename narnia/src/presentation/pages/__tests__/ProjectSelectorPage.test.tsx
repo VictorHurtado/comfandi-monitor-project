@@ -19,14 +19,14 @@ describe("ProjectSelectorPage", () => {
     expect(screen.getByLabelText("Navegación principal")).toBeInTheDocument();
     expect(screen.getByText("Seleccionar Proyecto")).toBeInTheDocument();
     expect(screen.getByText("keycloak.user@comfandi.com.co")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /^Dashboard$/i })).toHaveAttribute("href", "/dashboard/technical-health");
+    expect(screen.getByRole("button", { name: /^Dashboard$/i })).toBeDisabled();
     expect(screen.getByRole("link", { name: /^Proyectos$/i })).toHaveAttribute("href", "/project-selector");
     expect(screen.getByPlaceholderText("Buscar por nombre, ID o responsable de proyecto...")).toBeInTheDocument();
     expect(screen.getAllByText("Afiliaciones").length).toBeGreaterThan(0);
     expect(screen.getByText("Saludable (96%)")).toBeInTheDocument();
     expect(screen.getByLabelText("Abrir dashboard de Afiliaciones")).toHaveAttribute(
       "href",
-      "/dashboard/technical-health"
+      "/dashboard/technical-health/afiliaciones"
     );
     expect(screen.getByText("Agregar nuevo proyecto")).toBeInTheDocument();
   });
