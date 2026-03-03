@@ -1,6 +1,7 @@
 import type { AppEnvironment } from "@/infrastructure/config/environment";
 import { getEnvironment } from "@/infrastructure/config/environment";
 import {
+  BadRequestError,
   ForbiddenError,
   InternalServerError,
   NotFoundError,
@@ -249,6 +250,10 @@ export class JiraExternalApiService {
   }
 
   private throwByStatusCode(statusCode: number): never {
+    if (statusCode === 400) {
+      throw new BadRequestError("Invalid Jira project mapping or query");
+    }
+
     if (statusCode === 401) {
       throw new UnauthorizedError("Jira credentials are invalid");
     }

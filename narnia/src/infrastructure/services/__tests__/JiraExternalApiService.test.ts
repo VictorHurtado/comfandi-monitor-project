@@ -1,6 +1,7 @@
 import type { AppEnvironment } from "@/infrastructure/config/environment";
 import { JiraExternalApiService } from "@/infrastructure/services/JiraExternalApiService";
 import {
+  BadRequestError,
   InternalServerError,
   UnauthorizedError
 } from "@/utils/errors/domain-errors";
@@ -140,6 +141,17 @@ describe("JiraExternalApiService", () => {
 
     await expect(service.getProjectMetrics("afiliaciones")).rejects.toBeInstanceOf(
       UnauthorizedError
+    );
+  });
+
+  it("maps 400 responses to BadRequestError", async () => {
+    const service = new JiraExternalApiService(
+      jest.fn().mockResolvedValue(createResponse({ status: 400 })),
+      createEnvironment()
+    );
+
+    await expect(service.getProjectMetrics("afiliaciones")).rejects.toBeInstanceOf(
+      BadRequestError
     );
   });
 });

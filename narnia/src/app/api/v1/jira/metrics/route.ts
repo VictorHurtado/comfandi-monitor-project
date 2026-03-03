@@ -26,8 +26,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(metrics, { status: 200 });
   } catch (error) {
     if (error instanceof AppError) {
+      const friendlyMessageByStatusCode: Record<number, string> = {
+        400: error.message,
+        401: "No autorizado para consultar este recurso",
+        403: "Sin permisos para consultar Jira",
+        404: "Proyecto Jira no encontrado",
+        500: "Jira no disponible temporalmente"
+      };
       const message =
-        error.statusCode === 400 ? error.message : "Jira no disponible temporalmente";
+        friendlyMessageByStatusCode[error.statusCode] ?? "Jira no disponible temporalmente";
 
       return NextResponse.json({ message }, { status: error.statusCode });
     }
