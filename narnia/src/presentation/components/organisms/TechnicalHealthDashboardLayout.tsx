@@ -61,7 +61,7 @@ export function TechnicalHealthDashboardLayout({ projectId, projectName }: Techn
         </article>
       </section>
 
-      <IntegrationCardsGrid />
+      <IntegrationCardsGrid projectId={projectId} projectName={projectName} />
 
       <section className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <RecentAlertsPanel />

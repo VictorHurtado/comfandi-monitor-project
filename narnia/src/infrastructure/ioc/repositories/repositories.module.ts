@@ -1,7 +1,10 @@
 import { ContainerModule } from "inversify";
+import type { IJiraMetricsRepository } from "@/domain/repositories/IJiraMetricsRepository";
 import type { IStatusRepository } from "@/domain/repositories/IStatusRepository";
+import { JiraMetricsRepository } from "@/infrastructure/repositories/JiraMetricsRepository";
 import { StatusRepository } from "@/infrastructure/repositories/StatusRepository";
 import { ExternalApiService } from "@/infrastructure/services/ExternalApiService";
+import { JiraMetricsService } from "@/infrastructure/services/JiraMetricsService";
 import { KeycloakService } from "@/infrastructure/services/KeycloakService";
 import { REPOSITORY_TYPES } from "@/infrastructure/ioc/repositories/repositories.types";
 import { SERVICE_TYPES } from "@/infrastructure/ioc/services/services.types";
@@ -14,6 +17,12 @@ export const repositoriesModule = new ContainerModule(({ bind }) => {
           context.get<ExternalApiService>(SERVICE_TYPES.ExternalApiService),
           context.get<KeycloakService>(SERVICE_TYPES.KeycloakService)
         )
+    )
+    .inSingletonScope();
+
+  bind<IJiraMetricsRepository>(REPOSITORY_TYPES.IJiraMetricsRepository)
+    .toDynamicValue(
+      (context) => new JiraMetricsRepository(context.get<JiraMetricsService>(SERVICE_TYPES.JiraMetricsService))
     )
     .inSingletonScope();
 });

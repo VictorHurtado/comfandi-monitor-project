@@ -5,6 +5,10 @@ jest.mock("next-auth/react", () => ({
   useSession: () => ({ data: null })
 }));
 
+jest.mock("@/presentation/components/organisms/JiraIntegrationCard", () => ({
+  JiraIntegrationCard: () => <article>Jira dinámica</article>
+}));
+
 describe("TechnicalHealthDashboardLayout", () => {
   it("renders empty integration-ready sections and collapsible sidebar", () => {
     render(<TechnicalHealthDashboardLayout projectId="afiliaciones" projectName="Proyecto Afiliaciones" />);
@@ -13,9 +17,9 @@ describe("TechnicalHealthDashboardLayout", () => {
     expect(screen.getByLabelText("Buscar métrica")).toBeInTheDocument();
     expect(screen.getByText("SonarQube")).toBeInTheDocument();
     expect(screen.getByText("GitHub")).toBeInTheDocument();
-    expect(screen.getByText("Jira")).toBeInTheDocument();
+    expect(screen.getByText("Jira dinámica")).toBeInTheDocument();
     expect(screen.getByText("Proteo")).toBeInTheDocument();
-    expect(screen.getAllByText("Sin métricas conectadas")).toHaveLength(4);
+    expect(screen.getAllByText("Sin métricas conectadas")).toHaveLength(3);
     expect(screen.getByText("Sin alertas integradas")).toBeInTheDocument();
 
     fireEvent.click(screen.getByLabelText("Colapsar sidebar"));
