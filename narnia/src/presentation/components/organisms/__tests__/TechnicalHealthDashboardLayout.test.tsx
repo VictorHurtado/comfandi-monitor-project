@@ -6,7 +6,28 @@ jest.mock("next-auth/react", () => ({
 }));
 
 describe("TechnicalHealthDashboardLayout", () => {
-  it("renders empty integration-ready sections and collapsible sidebar", () => {
+  const originalFetch = global.fetch;
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+    jest.clearAllMocks();
+  });
+
+  it("renders empty integration-ready sections and collapsible sidebar", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        qualityGate: "passed",
+        projectKey: "monitor_afiliaciones",
+        projectSlug: "afiliaciones",
+        coverage: 80,
+        bugs: 1,
+        vulnerabilities: 0,
+        message: "Quality Gate passed",
+        checkedAt: "2026-01-01T00:00:00.000Z"
+      })
+    }) as unknown as typeof fetch;
+
     render(
       <TechnicalHealthDashboardLayout
         projectId="afiliaciones"
@@ -15,6 +36,9 @@ describe("TechnicalHealthDashboardLayout", () => {
           qualityGate: "passed",
           projectKey: "monitor_afiliaciones",
           projectSlug: "afiliaciones",
+          coverage: 80,
+          bugs: 1,
+          vulnerabilities: 0,
           message: "Quality Gate passed",
           checkedAt: "2026-01-01T00:00:00.000Z"
         }}
@@ -27,7 +51,7 @@ describe("TechnicalHealthDashboardLayout", () => {
     expect(screen.getByText("GitHub")).toBeInTheDocument();
     expect(screen.getByText("Jira")).toBeInTheDocument();
     expect(screen.getByText("Proteo")).toBeInTheDocument();
-    expect(screen.getByText("Quality Gate passed")).toBeInTheDocument();
+    expect(await screen.findByText("Quality Gate passed")).toBeInTheDocument();
     expect(screen.getAllByText("Sin métricas conectadas")).toHaveLength(3);
     expect(screen.getByText("Sin alertas integradas")).toBeInTheDocument();
 
@@ -37,6 +61,8 @@ describe("TechnicalHealthDashboardLayout", () => {
   });
 
   it("keeps only available navigation enabled", () => {
+    global.fetch = jest.fn(() => new Promise(() => {})) as unknown as typeof fetch;
+
     render(
       <TechnicalHealthDashboardLayout
         projectId="afiliaciones"
@@ -45,7 +71,10 @@ describe("TechnicalHealthDashboardLayout", () => {
           qualityGate: "unknown",
           projectKey: "",
           projectSlug: "afiliaciones",
-          message: "Sonar no disponible para este proyecto",
+          coverage: undefined,
+          bugs: undefined,
+          vulnerabilities: undefined,
+          message: "Cargando datos de Sonar...",
           checkedAt: "2026-01-01T00:00:00.000Z"
         }}
       />
@@ -55,5 +84,6 @@ describe("TechnicalHealthDashboardLayout", () => {
     expect(screen.getByRole("link", { name: /proyectos/i })).toHaveAttribute("href", "/project-selector");
     expect(screen.getByRole("button", { name: /alertas/i })).toBeDisabled();
     expect(screen.getByRole("button", { name: /configuración/i })).toBeDisabled();
+    expect(screen.getByText("Cargando datos de Sonar...")).toBeInTheDocument();
   });
 });

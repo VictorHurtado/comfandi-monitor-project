@@ -67,7 +67,11 @@ export function TechnicalHealthDashboardLayout({
         </article>
       </section>
 
-      <IntegrationCardsGrid projectName={projectName} sonarStatus={sonarStatus} />
+      <IntegrationCardsGrid
+        projectId={projectId}
+        projectName={projectName}
+        sonarStatus={sonarStatus}
+      />
 
       <section className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <RecentAlertsPanel />

@@ -17,58 +17,98 @@ describe("SonarApiService", () => {
     process.env = originalEnv;
   });
 
-  it("returns passed when quality gate status is OK", async () => {
+  it("returns quality gate and measures when Sonar responses are successful", async () => {
     const httpClientMock = {
-      get: jest.fn().mockResolvedValue({
-        data: {
-          projectStatus: {
-            status: "OK"
+      get: jest
+        .fn()
+        .mockResolvedValueOnce({
+          data: {
+            projectStatus: {
+              status: "OK"
+            }
           }
-        }
-      })
+        })
+        .mockResolvedValueOnce({
+          data: {
+            component: {
+              measures: [
+                { metric: "coverage", value: "82.5" },
+                { metric: "bugs", value: "3" },
+                { metric: "vulnerabilities", value: "1" }
+              ]
+            }
+          }
+        })
     };
 
     const service = new SonarApiService(httpClientMock as never);
-    const result = await service.getProjectQualityGate("monitor_afiliaciones");
+    const result = await service.getProjectSnapshot("monitor_afiliaciones");
 
-    expect(result).toBe("passed");
+    expect(result.qualityGate).toBe("passed");
+    expect(result.coverage).toBe(82.5);
+    expect(result.bugs).toBe(3);
+    expect(result.vulnerabilities).toBe(1);
     expect(httpClientMock.get).toHaveBeenCalledWith("/api/qualitygates/project_status", {
       params: { projectKey: "monitor_afiliaciones" }
     });
+    expect(httpClientMock.get).toHaveBeenCalledWith("/api/measures/component", {
+      params: {
+        component: "monitor_afiliaciones",
+        metricKeys: "coverage,bugs,vulnerabilities"
+      }
+    });
   });
 
-  it("returns failed when quality gate status is ERROR", async () => {
+  it("returns failed quality gate when status is ERROR", async () => {
     const httpClientMock = {
-      get: jest.fn().mockResolvedValue({
-        data: {
-          projectStatus: {
-            status: "ERROR"
+      get: jest
+        .fn()
+        .mockResolvedValueOnce({
+          data: {
+            projectStatus: {
+              status: "ERROR"
+            }
           }
-        }
-      })
+        })
+        .mockResolvedValueOnce({
+          data: {
+            component: {
+              measures: []
+            }
+          }
+        })
     };
 
     const service = new SonarApiService(httpClientMock as never);
-    const result = await service.getProjectQualityGate("monitor_afiliaciones");
+    const result = await service.getProjectSnapshot("monitor_afiliaciones");
 
-    expect(result).toBe("failed");
+    expect(result.qualityGate).toBe("failed");
   });
 
-  it("returns unknown when quality gate status is not recognized", async () => {
+  it("returns unknown quality gate when status is not recognized", async () => {
     const httpClientMock = {
-      get: jest.fn().mockResolvedValue({
-        data: {
-          projectStatus: {
-            status: "WARN"
+      get: jest
+        .fn()
+        .mockResolvedValueOnce({
+          data: {
+            projectStatus: {
+              status: "WARN"
+            }
           }
-        }
-      })
+        })
+        .mockResolvedValueOnce({
+          data: {
+            component: {
+              measures: []
+            }
+          }
+        })
     };
 
     const service = new SonarApiService(httpClientMock as never);
-    const result = await service.getProjectQualityGate("monitor_afiliaciones");
+    const result = await service.getProjectSnapshot("monitor_afiliaciones");
 
-    expect(result).toBe("unknown");
+    expect(result.qualityGate).toBe("unknown");
   });
 
   it("throws ValidationError when project key is empty", async () => {
@@ -78,7 +118,7 @@ describe("SonarApiService", () => {
 
     const service = new SonarApiService(httpClientMock as never);
 
-    await expect(service.getProjectQualityGate(" ")).rejects.toBeInstanceOf(
+    await expect(service.getProjectSnapshot(" ")).rejects.toBeInstanceOf(
       ValidationError
     );
   });
@@ -92,20 +132,43 @@ describe("SonarApiService", () => {
 
     const service = new SonarApiService(httpClientMock as never);
 
-    await expect(service.getProjectQualityGate("monitor_afiliaciones")).rejects.toBeInstanceOf(
+    await expect(service.getProjectSnapshot("monitor_afiliaciones")).rejects.toBeInstanceOf(
       InternalServerError
     );
   });
 
-  it("maps technical errors to InternalServerError", async () => {
+  it("maps quality gate technical errors to InternalServerError", async () => {
     const httpClientMock = {
       get: jest.fn().mockRejectedValue(new Error("timeout"))
     };
 
     const service = new SonarApiService(httpClientMock as never);
 
-    await expect(
-      service.getProjectQualityGate("monitor_afiliaciones")
-    ).rejects.toBeInstanceOf(InternalServerError);
+    await expect(service.getProjectSnapshot("monitor_afiliaciones")).rejects.toBeInstanceOf(
+      InternalServerError
+    );
+  });
+
+  it("returns undefined metrics when measures endpoint fails", async () => {
+    const httpClientMock = {
+      get: jest
+        .fn()
+        .mockResolvedValueOnce({
+          data: {
+            projectStatus: {
+              status: "OK"
+            }
+          }
+        })
+        .mockRejectedValueOnce(new Error("measures unavailable"))
+    };
+
+    const service = new SonarApiService(httpClientMock as never);
+    const result = await service.getProjectSnapshot("monitor_afiliaciones");
+
+    expect(result.qualityGate).toBe("passed");
+    expect(result.coverage).toBeUndefined();
+    expect(result.bugs).toBeUndefined();
+    expect(result.vulnerabilities).toBeUndefined();
   });
 });

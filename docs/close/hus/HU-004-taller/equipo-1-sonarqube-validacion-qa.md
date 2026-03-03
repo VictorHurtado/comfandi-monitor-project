@@ -11,6 +11,7 @@ Documento de apoyo para validar la implementación de SonarQube en el dashboard.
   - `SONAR_BASE_URL`
   - `SONAR_TOKEN`
   - `SONAR_PROJECT_KEY_MAP` (ej. `{"afiliaciones":"<clave-proyecto-sonar>"}`)
+- TTL de cache Sonar definido en BFF: **5 minutos** por proyecto.
 
 ---
 
@@ -85,13 +86,34 @@ Documento de apoyo para validar la implementación de SonarQube en el dashboard.
 **Pasos:**
 
 1. Con Sonar configurado correctamente, abrir el dashboard y anotar los valores de la tarjeta Sonar.
-2. Refrescar la página (F5).
-3. Comprobar que los valores se vuelven a cargar (pueden ser los mismos si no ha cambiado Sonar).
+2. Refrescar la página (F5) antes de cumplir 5 minutos.
+3. Comprobar que la tarjeta responde rápido (cache vigente) y mantiene coherencia de datos.
+4. Esperar más de 5 minutos o cambiar reloj de prueba para superar el TTL.
+5. Refrescar nuevamente y validar que la tarjeta revalida la información.
 
 **Resultado esperado:**
 
-- Tras refrescar, los datos de Sonar se cargan de nuevo y se muestran correctamente.
+- Dentro de los 5 minutos, se puede reutilizar cache sin inconsistencias.
+- Después de 5 minutos, se reconsulta Sonar y se actualizan datos.
 - No queda estado corrupto ni datos en blanco por error de cache.
+
+---
+
+## Escenario 5: Carga no bloqueante del dashboard
+
+**Objetivo:** Verificar que la tarjeta Sonar carga de forma independiente y no bloquea el resto del dashboard.
+
+**Pasos:**
+
+1. Configurar Sonar con respuesta lenta (o simular latencia de red).
+2. Abrir el dashboard de salud técnica con **Afiliaciones**.
+3. Observar el primer render de la página y luego la tarjeta Sonar.
+
+**Resultado esperado:**
+
+- El dashboard se muestra completo (sidebar, otras tarjetas y paneles) sin esperar a Sonar.
+- La tarjeta Sonar muestra estado de carga propio y luego actualiza datos.
+- Si Sonar falla, solo la tarjeta muestra mensaje corto no técnico; el resto de la página permanece usable.
 
 ---
 
@@ -100,4 +122,5 @@ Documento de apoyo para validar la implementación de SonarQube en el dashboard.
 - [ ] Escenario 1 (proyecto bueno): semáforo verde y métricas visibles.
 - [ ] Escenario 2 (proyecto malo): semáforo rojo y métricas coherentes.
 - [ ] Escenario 3 (Sonar no disponible): mensaje corto, sin detalles técnicos, dashboard estable.
-- [ ] Escenario 4 (refresco): datos se recargan al actualizar la página.
+- [ ] Escenario 4 (TTL 5 min): cache reciente + revalidación tras expiración.
+- [ ] Escenario 5 (no bloqueante): dashboard usable mientras Sonar carga o falla.
