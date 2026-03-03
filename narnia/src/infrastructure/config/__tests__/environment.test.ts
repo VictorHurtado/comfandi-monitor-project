@@ -32,6 +32,30 @@ describe("environment", () => {
     expect(env.keycloakClientSecret).toBe("secret");
   });
 
+  it("reads sonar values from env", async () => {
+    process.env.SONAR_BASE_URL = "https://sonarcloud.io";
+    process.env.SONAR_TOKEN = "sonar-token";
+    process.env.SONAR_PROJECT_KEY_MAP = JSON.stringify({
+      afiliaciones: "monitor_afiliaciones"
+    });
+
+    const { getEnvironment } = await import("@/infrastructure/config/environment");
+    const env = getEnvironment();
+
+    expect(env.sonarBaseUrl).toBe("https://sonarcloud.io");
+    expect(env.sonarToken).toBe("sonar-token");
+    expect(env.sonarProjectKeyMap.afiliaciones).toBe("monitor_afiliaciones");
+  });
+
+  it("returns empty sonar project map when json is invalid", async () => {
+    process.env.SONAR_PROJECT_KEY_MAP = "{invalid-json";
+
+    const { getEnvironment } = await import("@/infrastructure/config/environment");
+    const env = getEnvironment();
+
+    expect(env.sonarProjectKeyMap).toEqual({});
+  });
+
   it("enables authDisabled when AUTH_DISABLED=true outside production", async () => {
     process.env.AUTH_DISABLED = "true";
     process.env.NODE_ENV = "development";

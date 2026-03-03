@@ -3,6 +3,7 @@ import type { AxiosInstance } from "axios";
 import { axiosInstance } from "@/infrastructure/network/axiosInstance";
 import { ExternalApiService } from "@/infrastructure/services/ExternalApiService";
 import { KeycloakService } from "@/infrastructure/services/KeycloakService";
+import { SonarApiService } from "@/infrastructure/services/SonarApiService";
 import { SERVICE_TYPES } from "@/infrastructure/ioc/services/services.types";
 
 export const servicesModule = new ContainerModule(({ bind }) => {
@@ -16,5 +17,9 @@ export const servicesModule = new ContainerModule(({ bind }) => {
 
   bind<KeycloakService>(SERVICE_TYPES.KeycloakService)
     .toDynamicValue(() => new KeycloakService())
+    .inSingletonScope();
+
+  bind<SonarApiService>(SERVICE_TYPES.SonarApiService)
+    .toDynamicValue(() => new SonarApiService())
     .inSingletonScope();
 });

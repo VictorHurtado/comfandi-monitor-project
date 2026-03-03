@@ -6,16 +6,53 @@ jest.mock("next-auth/react", () => ({
 }));
 
 describe("TechnicalHealthDashboardLayout", () => {
-  it("renders empty integration-ready sections and collapsible sidebar", () => {
-    render(<TechnicalHealthDashboardLayout projectId="afiliaciones" projectName="Proyecto Afiliaciones" />);
+  const originalFetch = global.fetch;
+
+  afterEach(() => {
+    global.fetch = originalFetch;
+    jest.clearAllMocks();
+  });
+
+  it("renders empty integration-ready sections and collapsible sidebar", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        qualityGate: "passed",
+        projectKey: "monitor_afiliaciones",
+        projectSlug: "afiliaciones",
+        coverage: 80,
+        bugs: 1,
+        vulnerabilities: 0,
+        message: "Quality Gate passed",
+        checkedAt: "2026-01-01T00:00:00.000Z"
+      })
+    }) as unknown as typeof fetch;
+
+    render(
+      <TechnicalHealthDashboardLayout
+        projectId="afiliaciones"
+        projectName="Proyecto Afiliaciones"
+        sonarStatus={{
+          qualityGate: "passed",
+          projectKey: "monitor_afiliaciones",
+          projectSlug: "afiliaciones",
+          coverage: 80,
+          bugs: 1,
+          vulnerabilities: 0,
+          message: "Quality Gate passed",
+          checkedAt: "2026-01-01T00:00:00.000Z"
+        }}
+      />
+    );
 
     expect(screen.getByLabelText("Navegación principal")).toBeInTheDocument();
     expect(screen.getByLabelText("Buscar métrica")).toBeInTheDocument();
-    expect(screen.getByText("SonarQube")).toBeInTheDocument();
+    expect(screen.getByText(/SonarQube/i)).toBeInTheDocument();
     expect(screen.getByText("GitHub")).toBeInTheDocument();
     expect(screen.getByText("Jira")).toBeInTheDocument();
     expect(screen.getByText("Proteo")).toBeInTheDocument();
-    expect(screen.getAllByText("Sin métricas conectadas")).toHaveLength(4);
+    expect(await screen.findByText("Quality Gate passed")).toBeInTheDocument();
+    expect(screen.getAllByText("Sin métricas conectadas")).toHaveLength(3);
     expect(screen.getByText("Sin alertas integradas")).toBeInTheDocument();
 
     fireEvent.click(screen.getByLabelText("Colapsar sidebar"));
@@ -24,11 +61,29 @@ describe("TechnicalHealthDashboardLayout", () => {
   });
 
   it("keeps only available navigation enabled", () => {
-    render(<TechnicalHealthDashboardLayout projectId="afiliaciones" projectName="Proyecto Afiliaciones" />);
+    global.fetch = jest.fn(() => new Promise(() => {})) as unknown as typeof fetch;
+
+    render(
+      <TechnicalHealthDashboardLayout
+        projectId="afiliaciones"
+        projectName="Proyecto Afiliaciones"
+        sonarStatus={{
+          qualityGate: "unknown",
+          projectKey: "",
+          projectSlug: "afiliaciones",
+          coverage: undefined,
+          bugs: undefined,
+          vulnerabilities: undefined,
+          message: "Cargando datos de Sonar...",
+          checkedAt: "2026-01-01T00:00:00.000Z"
+        }}
+      />
+    );
 
     expect(screen.getByRole("link", { name: /dashboard/i })).toHaveAttribute("href", "/dashboard/technical-health/afiliaciones");
     expect(screen.getByRole("link", { name: /proyectos/i })).toHaveAttribute("href", "/project-selector");
     expect(screen.getByRole("button", { name: /alertas/i })).toBeDisabled();
     expect(screen.getByRole("button", { name: /configuración/i })).toBeDisabled();
+    expect(screen.getByText("Cargando datos de Sonar...")).toBeInTheDocument();
   });
 });

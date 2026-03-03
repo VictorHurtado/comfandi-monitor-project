@@ -1,5 +1,13 @@
-import type { ComponentType } from "react";
-import { GitBranch, ShieldCheck, Siren, Workflow } from "lucide-react";
+"use client";
+
+import { useEffect, useState, type ComponentType } from "react";
+import { useSession } from "next-auth/react";
+import { GitBranch, Siren, Workflow } from "lucide-react";
+import type { SonarProjectStatus } from "@/domain/models/SonarProjectStatus";
+import {
+  SonarIntegrationCard,
+  SonarIntegrationCardLoading
+} from "@/presentation/components/organisms/SonarIntegrationCard";
 
 interface IntegrationCard {
   readonly id: string;
@@ -8,13 +16,13 @@ interface IntegrationCard {
   readonly icon: ComponentType<{ className?: string }>;
 }
 
+interface IntegrationCardsGridProps {
+  readonly projectId: string;
+  readonly projectName: string;
+  readonly sonarStatus: SonarProjectStatus;
+}
+
 const integrationCards: readonly IntegrationCard[] = [
-  {
-    id: "sonar",
-    title: "SonarQube",
-    workshopOwner: "Equipo 1",
-    icon: ShieldCheck
-  },
   {
     id: "github",
     title: "GitHub",
@@ -35,9 +43,95 @@ const integrationCards: readonly IntegrationCard[] = [
   }
 ];
 
-export function IntegrationCardsGrid() {
+function createUnavailableSonarStatus(projectSlug: string): SonarProjectStatus {
+  return {
+    qualityGate: "unknown",
+    projectKey: "",
+    projectSlug,
+    coverage: undefined,
+    bugs: undefined,
+    vulnerabilities: undefined,
+    message: "Sonar no disponible",
+    checkedAt: new Date().toISOString()
+  };
+}
+
+function shouldStartLoading(status: SonarProjectStatus): boolean {
+  return status.message.toLowerCase().includes("cargando");
+}
+
+export function IntegrationCardsGrid({
+  projectId,
+  projectName,
+  sonarStatus: initialSonarStatus
+}: IntegrationCardsGridProps) {
+  const [sonarStatus, setSonarStatus] = useState(initialSonarStatus);
+  const [isLoading, setIsLoading] = useState(() => shouldStartLoading(initialSonarStatus));
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    let isMounted = true;
+    const abortController = new AbortController();
+
+    const loadSonarStatus = async () => {
+      setIsLoading(true);
+
+      try {
+        const accessToken = (
+          session as
+            | {
+                access_token?: string;
+              }
+            | undefined
+        )?.access_token;
+
+        const response = await fetch(`/api/v1/projects/${projectId}/integrations/sonar`, {
+          method: "GET",
+          headers: accessToken
+            ? {
+                Authorization: `Bearer ${accessToken}`
+              }
+            : undefined,
+          cache: "no-store",
+          signal: abortController.signal
+        });
+
+        if (!response.ok) {
+          throw new Error("unable to load sonar status");
+        }
+
+        const data = (await response.json()) as SonarProjectStatus;
+
+        if (isMounted) {
+          setSonarStatus(data);
+        }
+      } catch {
+        if (isMounted) {
+          setSonarStatus(createUnavailableSonarStatus(projectId));
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    void loadSonarStatus();
+
+    return () => {
+      isMounted = false;
+      abortController.abort();
+    };
+  }, [projectId, session]);
+
   return (
     <section aria-label="Integraciones técnicas" className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+      {isLoading ? (
+        <SonarIntegrationCardLoading projectName={projectName} />
+      ) : (
+        <SonarIntegrationCard projectName={projectName} sonarStatus={sonarStatus} />
+      )}
+
       {integrationCards.map((card) => {
         const Icon = card.icon;
 
