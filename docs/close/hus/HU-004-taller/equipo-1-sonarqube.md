@@ -15,7 +15,24 @@ SonarQube para mostrar salud de calidad en dashboard general.
 
 ---
 
-## Historia 1 (borrador sin refinar)
+## HUs técnicas (refinadas)
+
+Las historias de negocio se refinaron en las siguientes HUs técnicas para implementación por agentes:
+
+| HU | Título |
+|----|--------|
+| **HU-007** | Configuración SonarQube por proyecto y tarjeta con semáforo en dashboard |
+| **HU-008** | Mostrar métricas SonarQube (Coverage, Bugs, Vulnerabilities) en la tarjeta |
+| **HU-009** | Actualización reciente de SonarQube, mensajes de error y validación QA |
+
+- Ubicación: `docs/close/hus/HU-007.md`, `HU-008.md`, `HU-009.md`.
+- Validación QA: `docs/close/hus/HU-004-taller/equipo-1-sonarqube-validacion-qa.md`.
+
+**Contexto proyecto:** por ahora solo **afiliaciones** en el monitor (en Jira = proyecto **PSA** — Sucursal Afiliaciones). Configuración por variables de entorno; patrón análogo a Jira (`JIRA_BASE_URL`, `JIRA_PROJECT_KEY_MAP`, etc.). Sonar: `SONAR_BASE_URL`, `SONAR_TOKEN`, `SONAR_PROJECT_KEY_MAP`.
+
+---
+
+## Historia 1 (borrador sin refinar — reemplazada por HU-007)
 
 ### Criterios de aceptacion
 
