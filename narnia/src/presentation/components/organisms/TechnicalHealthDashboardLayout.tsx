@@ -15,6 +15,7 @@ export function TechnicalHealthDashboardLayout({ projectId, projectName }: Techn
   return (
     <AppSidebarLayout
       activeSection="dashboard"
+      currentProjectName={projectName}
       breadcrumbCurrent={projectName}
       breadcrumbSection="Proyectos"
       dashboardHref={`/dashboard/technical-health/${projectId}`}
