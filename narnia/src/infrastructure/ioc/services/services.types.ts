@@ -1,5 +1,6 @@
 export const SERVICE_TYPES = {
   AxiosInstance: Symbol.for("AxiosInstance"),
   ExternalApiService: Symbol.for("ExternalApiService"),
-  KeycloakService: Symbol.for("KeycloakService")
+  KeycloakService: Symbol.for("KeycloakService"),
+  SonarApiService: Symbol.for("SonarApiService")
 };
