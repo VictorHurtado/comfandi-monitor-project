@@ -4,6 +4,8 @@
 
 GitHub para actividad de desarrollo en dashboard general.
 
+> Nota de flujo: esta tarjeta se trabaja en el dashboard de un proyecto seleccionado desde `/project-selector`.
+
 ## 4 metricas que deberian quedar
 
 1. Pull Requests abiertas

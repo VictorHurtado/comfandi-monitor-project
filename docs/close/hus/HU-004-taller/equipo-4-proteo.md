@@ -4,6 +4,8 @@
 
 Proteo para cumplimiento operativo relacionado con PQRS en dashboard general.
 
+> Nota de flujo: esta tarjeta se trabaja en el dashboard de un proyecto seleccionado desde `/project-selector`.
+
 ## 4 metricas que deberian quedar
 
 1. Cumplimiento general (%)
