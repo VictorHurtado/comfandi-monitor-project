@@ -23,7 +23,7 @@ export class JiraMetricsService {
     }
 
     try {
-      const response = await this.http.get<JiraMetricsDto>("/api/v1/jira/metrics", {
+      const response = await this.http.get<JiraMetricsDto>(this.resolveEndpoint(), {
         params: { projectId: normalizedProjectId }
       });
 
@@ -35,5 +35,16 @@ export class JiraMetricsService {
 
       throw new InternalServerError("Error loading Jira metrics", error);
     }
+  }
+
+  private resolveEndpoint(): string {
+    const baseUrl = this.http.defaults?.baseURL ?? "";
+
+    // Avoid duplicated /api/v1 when the axios baseURL already includes it.
+    if (baseUrl.includes("/api/v1")) {
+      return "/jira/metrics";
+    }
+
+    return "/api/v1/jira/metrics";
   }
 }
