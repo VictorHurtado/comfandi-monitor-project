@@ -11,6 +11,7 @@ type SidebarSection = "dashboard" | "projects";
 interface AppSidebarLayoutProps {
   readonly activeSection: SidebarSection;
   readonly dashboardHref?: string;
+  readonly currentProjectName?: string;
   readonly breadcrumbSection: string;
   readonly breadcrumbCurrent: string;
   readonly topSearchLabel: string;
@@ -21,9 +22,54 @@ interface AppSidebarLayoutProps {
   readonly children: ReactNode;
 }
 
+function getNavItemStateClass(active: boolean): string {
+  return active ? "bg-[#137fec]/15 text-[#6aa8ff]" : "text-slate-400 hover:bg-slate-800 hover:text-slate-100";
+}
+
+interface ProjectDashboardNavProps {
+  readonly dashboardHref?: string;
+  readonly currentProjectName?: string;
+  readonly isSidebarCollapsed: boolean;
+  readonly navItemClassName: string;
+  readonly activeSection: SidebarSection;
+  readonly showLabelsClassName: string;
+}
+
+function ProjectDashboardNav({
+  dashboardHref,
+  currentProjectName,
+  isSidebarCollapsed,
+  navItemClassName,
+  activeSection,
+  showLabelsClassName
+}: ProjectDashboardNavProps) {
+  if (!dashboardHref) return null;
+
+  const projectName = currentProjectName ?? "Proyecto seleccionado";
+  const dashboardNavClassName = `${navItemClassName} text-button ${getNavItemStateClass(activeSection === "dashboard")} ${
+    isSidebarCollapsed ? "" : "ml-3 w-[calc(100%-0.75rem)]"
+  }`;
+
+  return (
+    <div className={isSidebarCollapsed ? "pt-1" : "space-y-1 pt-2"}>
+      {isSidebarCollapsed ? null : <p className="px-3 text-caption uppercase tracking-wide text-slate-500">{projectName}</p>}
+      <Link
+        aria-label="Dashboard"
+        className={dashboardNavClassName}
+        href={dashboardHref}
+        title={`Dashboard de ${projectName}`}
+      >
+        <LayoutDashboard className="size-4" aria-hidden />
+        <span className={showLabelsClassName}>Dashboard</span>
+      </Link>
+    </div>
+  );
+}
+
 export function AppSidebarLayout({
   activeSection,
   dashboardHref,
+  currentProjectName,
   breadcrumbSection,
   breadcrumbCurrent,
   topSearchLabel,
@@ -72,45 +118,23 @@ export function AppSidebarLayout({
           </div>
 
           <nav aria-label="Navegación principal" className="w-full space-y-1">
-            {dashboardHref ? (
-              <Link
-                aria-label="Dashboard"
-                className={`${navItemClassName} text-button ${
-                  activeSection === "dashboard"
-                    ? "bg-[#137fec]/15 text-[#6aa8ff]"
-                    : "text-slate-400 hover:bg-slate-800 hover:text-slate-100"
-                }`}
-                href={dashboardHref}
-                title="Dashboard"
-              >
-                <LayoutDashboard className="size-4" aria-hidden />
-                <span className={showLabelsClassName}>Dashboard</span>
-              </Link>
-            ) : (
-              <button
-                aria-label="Dashboard"
-                className={`${navItemClassName} cursor-not-allowed text-button text-slate-500`}
-                disabled
-                title="Selecciona un proyecto para habilitar Dashboard"
-                type="button"
-              >
-                <LayoutDashboard className="size-4" aria-hidden />
-                <span className={showLabelsClassName}>Dashboard</span>
-              </button>
-            )}
             <Link
               aria-label="Proyectos"
-              className={`${navItemClassName} text-button ${
-                activeSection === "projects"
-                  ? "bg-[#137fec]/15 text-[#6aa8ff]"
-                  : "text-slate-400 hover:bg-slate-800 hover:text-slate-100"
-              }`}
+              className={`${navItemClassName} text-button ${getNavItemStateClass(activeSection === "projects")}`}
               href="/project-selector"
               title="Proyectos"
             >
               <BarChart3 className="size-4" aria-hidden />
               <span className={showLabelsClassName}>Proyectos</span>
             </Link>
+            <ProjectDashboardNav
+              activeSection={activeSection}
+              currentProjectName={currentProjectName}
+              dashboardHref={dashboardHref}
+              isSidebarCollapsed={isSidebarCollapsed}
+              navItemClassName={navItemClassName}
+              showLabelsClassName={showLabelsClassName}
+            />
             <button
               aria-label="Alertas"
               className={`${navItemClassName} cursor-not-allowed text-button text-slate-500`}
