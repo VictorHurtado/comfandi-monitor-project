@@ -94,3 +94,8 @@ npm run build
 | Archivo | Stmts | Branch | Funcs | Lines |
 | --- | --- | --- | --- | --- |
 | **Global** | **88.1%** | **78.57%** | **96.34%** | **89.05%** |
+
+## Documentacion complementaria
+
+- `docs/documentation/PR_HU-008.md`
+- `docs/documentation/PR_HU-009.md`
