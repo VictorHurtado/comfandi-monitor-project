@@ -8,10 +8,11 @@
 
 - Equipo 1: `equipo-1-sonarqube.md`
 - Equipo 2: `equipo-2-github.md`
-- Equipo 3: `equipo-3-sentry.md`
+- Equipo 3: `equipo-3-jira.md`
 - Equipo 4: `equipo-4-proteo.md`
 
 ## Notas
 
 - Cada equipo tiene 4 metricas objetivo para su integracion.
 - Cada equipo tiene 3 historias con solo criterios de aceptacion "humanos", no tecnicos.
+- El dashboard se accede solo despues de seleccionar proyecto en `/project-selector`.

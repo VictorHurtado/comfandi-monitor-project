@@ -1,5 +1,5 @@
-import { HealthStatusPage } from "@/presentation/pages/HealthStatusPage";
+import { redirect } from "next/navigation";
 
-export default async function TechnicalHealthDashboardRoute() {
-  return <HealthStatusPage />;
+export default function TechnicalHealthDashboardRootRoute() {
+  redirect("/project-selector");
 }

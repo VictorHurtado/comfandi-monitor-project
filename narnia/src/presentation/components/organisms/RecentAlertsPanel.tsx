@@ -10,7 +10,7 @@ export function RecentAlertsPanel() {
           <div className="space-y-2">
             <h4 className="text-button text-slate-100">Sin alertas integradas</h4>
             <p className="text-body text-slate-400">
-              Este bloque queda vacío para que el equipo conecte reglas y eventos desde Sentry/GitHub durante el taller.
+              Este bloque queda vacío para que el equipo conecte reglas y eventos desde Jira/GitHub durante el taller.
             </p>
           </div>
         </div>

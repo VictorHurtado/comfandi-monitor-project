@@ -10,6 +10,7 @@ type SidebarSection = "dashboard" | "projects";
 
 interface AppSidebarLayoutProps {
   readonly activeSection: SidebarSection;
+  readonly dashboardHref?: string;
   readonly breadcrumbSection: string;
   readonly breadcrumbCurrent: string;
   readonly topSearchLabel: string;
@@ -22,6 +23,7 @@ interface AppSidebarLayoutProps {
 
 export function AppSidebarLayout({
   activeSection,
+  dashboardHref,
   breadcrumbSection,
   breadcrumbCurrent,
   topSearchLabel,
@@ -70,19 +72,32 @@ export function AppSidebarLayout({
           </div>
 
           <nav aria-label="Navegación principal" className="w-full space-y-1">
-            <Link
-              aria-label="Dashboard"
-              className={`${navItemClassName} text-button ${
-                activeSection === "dashboard"
-                  ? "bg-[#137fec]/15 text-[#6aa8ff]"
-                  : "text-slate-400 hover:bg-slate-800 hover:text-slate-100"
-              }`}
-              href="/dashboard/technical-health"
-              title="Dashboard"
-            >
-              <LayoutDashboard className="size-4" aria-hidden />
-              <span className={showLabelsClassName}>Dashboard</span>
-            </Link>
+            {dashboardHref ? (
+              <Link
+                aria-label="Dashboard"
+                className={`${navItemClassName} text-button ${
+                  activeSection === "dashboard"
+                    ? "bg-[#137fec]/15 text-[#6aa8ff]"
+                    : "text-slate-400 hover:bg-slate-800 hover:text-slate-100"
+                }`}
+                href={dashboardHref}
+                title="Dashboard"
+              >
+                <LayoutDashboard className="size-4" aria-hidden />
+                <span className={showLabelsClassName}>Dashboard</span>
+              </Link>
+            ) : (
+              <button
+                aria-label="Dashboard"
+                className={`${navItemClassName} cursor-not-allowed text-button text-slate-500`}
+                disabled
+                title="Selecciona un proyecto para habilitar Dashboard"
+                type="button"
+              >
+                <LayoutDashboard className="size-4" aria-hidden />
+                <span className={showLabelsClassName}>Dashboard</span>
+              </button>
+            )}
             <Link
               aria-label="Proyectos"
               className={`${navItemClassName} text-button ${

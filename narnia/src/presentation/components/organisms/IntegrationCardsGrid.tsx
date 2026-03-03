@@ -22,8 +22,8 @@ const integrationCards: readonly IntegrationCard[] = [
     icon: GitBranch
   },
   {
-    id: "sentry",
-    title: "Sentry",
+    id: "jira",
+    title: "Jira",
     workshopOwner: "Equipo 3",
     icon: Siren
   },

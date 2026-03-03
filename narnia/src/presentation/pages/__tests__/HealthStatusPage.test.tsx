@@ -7,10 +7,10 @@ jest.mock("next-auth/react", () => ({
 
 describe("HealthStatusPage", () => {
   it("renders technical dashboard shell sections", async () => {
-    const ui = await HealthStatusPage();
+    const ui = await HealthStatusPage({ projectId: "afiliaciones", projectName: "Proyecto Afiliaciones" });
     render(ui);
 
-    expect(screen.getByText("Estado General: Proyecto Alfa")).toBeInTheDocument();
+    expect(screen.getByText("Estado General: Proyecto Afiliaciones")).toBeInTheDocument();
     expect(screen.getByText("Historial de Salud General")).toBeInTheDocument();
     expect(screen.getByText("Technical Health Score")).toBeInTheDocument();
     expect(screen.getByLabelText("Integraciones técnicas")).toBeInTheDocument();

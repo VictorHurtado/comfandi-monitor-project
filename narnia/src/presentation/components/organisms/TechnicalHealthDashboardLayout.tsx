@@ -6,12 +6,18 @@ import { IntegrationCardsGrid } from "@/presentation/components/organisms/Integr
 import { RecentAlertsPanel } from "@/presentation/components/organisms/RecentAlertsPanel";
 import { AppSidebarLayout } from "@/presentation/components/templates/AppSidebarLayout";
 
-export function TechnicalHealthDashboardLayout() {
+interface TechnicalHealthDashboardLayoutProps {
+  readonly projectId: string;
+  readonly projectName: string;
+}
+
+export function TechnicalHealthDashboardLayout({ projectId, projectName }: TechnicalHealthDashboardLayoutProps) {
   return (
     <AppSidebarLayout
       activeSection="dashboard"
-      breadcrumbCurrent="Proyecto Alfa"
+      breadcrumbCurrent={projectName}
       breadcrumbSection="Proyectos"
+      dashboardHref={`/dashboard/technical-health/${projectId}`}
       topSearchLabel="Buscar métrica"
       topSearchPlaceholder="Buscar métrica..."
       pageActions={
@@ -32,7 +38,7 @@ export function TechnicalHealthDashboardLayout() {
         </div>
       }
       pageDescription="Estructura base preparada para integrar datos reales por equipos durante el taller."
-      pageTitle="Estado General: Proyecto Alfa"
+      pageTitle={`Estado General: ${projectName}`}
     >
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <article className="rounded-card border border-slate-800 bg-slate-900 p-6 lg:col-span-2">
