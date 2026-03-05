@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import { GitBranch, ShieldCheck, Siren, Workflow } from "lucide-react";
+import { SonarIntegrationCard } from "./SonarIntegrationCard";
 
 interface IntegrationCard {
   readonly id: string;
@@ -35,12 +36,26 @@ const integrationCards: readonly IntegrationCard[] = [
   }
 ];
 
-export function IntegrationCardsGrid() {
+interface IntegrationCardsGridProps {
+  readonly projectId: string;
+  readonly projectName: string;
+}
+
+export function IntegrationCardsGrid({ projectId, projectName }: IntegrationCardsGridProps) {
   return (
     <section aria-label="Integraciones técnicas" className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
       {integrationCards.map((card) => {
-        const Icon = card.icon;
+        if (card.id === "sonar") {
+          return (
+            <SonarIntegrationCard
+              key={card.id}
+              projectId={projectId}
+              projectName={projectName}
+            />
+          );
+        }
 
+        const Icon = card.icon;
         return (
           <article key={card.id} className="rounded-card border border-slate-800 bg-slate-900 p-5">
             <header className="mb-5 flex items-center justify-between gap-3">
