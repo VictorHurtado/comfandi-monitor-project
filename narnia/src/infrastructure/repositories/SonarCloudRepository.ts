@@ -58,7 +58,7 @@ export class SonarCloudRepository implements ISonarRepository {
         status: "unknown",
         sonarProjectKey,
         projectName: "",
-        message: "Sonar no disponible",
+        message: "No se pudo conectar con Sonar",
         coverage: null,
         bugs: null,
         vulnerabilities: null
@@ -86,7 +86,7 @@ export class SonarCloudRepository implements ISonarRepository {
           status: "unknown",
           sonarProjectKey,
           projectName: "",
-          message: "Sonar no disponible",
+          message: "No se pudo conectar con Sonar",
           coverage: null,
           bugs: null,
           vulnerabilities: null
@@ -120,7 +120,7 @@ export class SonarCloudRepository implements ISonarRepository {
         status: "unknown",
         sonarProjectKey,
         projectName: "",
-        message: "Sonar no disponible",
+        message: "No se pudo conectar con Sonar",
         coverage: null,
         bugs: null,
         vulnerabilities: null

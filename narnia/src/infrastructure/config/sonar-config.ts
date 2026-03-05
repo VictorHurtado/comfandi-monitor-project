@@ -4,6 +4,8 @@ export interface SonarConfig {
   baseUrl: string;
   token: string;
   projectKeyMap: Record<string, string>;
+  /** TTL de caché en minutos (0 = sin caché). Default 5. */
+  cacheTtlMinutes: number;
 }
 
 function parseProjectKeyMap(raw: string): Record<string, string> {
@@ -19,11 +21,17 @@ function parseProjectKeyMap(raw: string): Record<string, string> {
   return {};
 }
 
+function parseCacheTtl(raw: string): number {
+  const n = parseInt(raw, 10);
+  return Number.isFinite(n) && n >= 0 ? n : 5;
+}
+
 export function getSonarConfig(): SonarConfig {
   return {
     baseUrl: readEnv("SONAR_BASE_URL").replace(/\/$/, "") || "https://sonarcloud.io",
     token: readEnv("SONAR_TOKEN"),
-    projectKeyMap: parseProjectKeyMap(readEnv("SONAR_PROJECT_KEY_MAP"))
+    projectKeyMap: parseProjectKeyMap(readEnv("SONAR_PROJECT_KEY_MAP")),
+    cacheTtlMinutes: parseCacheTtl(readEnv("SONAR_CACHE_TTL_MINUTES"))
   };
 }
 
