@@ -96,7 +96,7 @@ export function SonarIntegrationCard({ projectId, projectName }: SonarIntegratio
       <div className="space-y-3">
         <div className="rounded-input border border-slate-700 bg-slate-950/40 p-3">
           <p className="text-caption uppercase text-slate-500">Proyecto</p>
-          <p className="text-button text-slate-100 font-outfit">{displayName}</p>
+          <p className="text-button text-slate-100">{displayName}</p>
         </div>
 
         {loading ? (
@@ -108,19 +108,41 @@ export function SonarIntegrationCard({ projectId, projectName }: SonarIntegratio
             {message}
           </div>
         ) : (
-          <div className="flex items-center justify-between rounded-input border border-slate-700 p-3">
-            <span className="text-caption text-slate-500">Quality Gate</span>
-            <span
-              className={`size-3 shrink-0 rounded-full ${
-                status === "passed"
-                  ? "bg-status-success"
-                  : status === "failed"
-                    ? "bg-status-danger"
-                    : "bg-status-warning"
-              }`}
-              aria-label={getTrafficLightLabel(status)}
-            />
-          </div>
+          <>
+            <div className="flex items-center justify-between rounded-input border border-slate-700 p-3">
+              <span className="text-caption text-slate-500">Quality Gate</span>
+              <span
+                className={`size-3 shrink-0 rounded-full ${
+                  status === "passed"
+                    ? "bg-status-success"
+                    : status === "failed"
+                      ? "bg-status-danger"
+                      : "bg-status-warning"
+                }`}
+                aria-label={getTrafficLightLabel(status)}
+              />
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <div className="rounded-input border border-slate-700 bg-slate-950/40 p-3 text-center">
+                <p className="text-caption uppercase text-slate-500">Coverage</p>
+                <p className="text-button font-semibold text-slate-100">
+                  {data?.coverage != null ? `${Math.round(data.coverage)}%` : "sin dato"}
+                </p>
+              </div>
+              <div className="rounded-input border border-slate-700 bg-slate-950/40 p-3 text-center">
+                <p className="text-caption uppercase text-slate-500">Bugs</p>
+                <p className="text-button font-semibold text-slate-100">
+                  {data?.bugs != null ? String(data.bugs) : "sin dato"}
+                </p>
+              </div>
+              <div className="rounded-input border border-slate-700 bg-slate-950/40 p-3 text-center">
+                <p className="text-caption uppercase text-slate-500">Vulnerab.</p>
+                <p className="text-button font-semibold text-slate-100">
+                  {data?.vulnerabilities != null ? String(data.vulnerabilities) : "sin dato"}
+                </p>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </article>

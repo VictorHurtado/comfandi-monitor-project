@@ -78,4 +78,49 @@ describe("SonarIntegrationCard", () => {
       expect(screen.getByText("Sonar no disponible")).toBeInTheDocument();
     });
   });
+
+  it("shows Coverage Bugs and Vulnerabilities when data has metrics", async () => {
+    (globalThis.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: () =>
+        Promise.resolve({
+          status: "passed",
+          sonarProjectKey: "ComfandiTD_afiliaciones",
+          projectName: "Afiliaciones",
+          coverage: 82.5,
+          bugs: 3,
+          vulnerabilities: 0
+        })
+    });
+
+    render(<SonarIntegrationCard projectId="afiliaciones" projectName="Afiliaciones" />);
+
+    await waitFor(() => {
+      expect(screen.getByText("83%")).toBeInTheDocument();
+      expect(screen.getByText("3")).toBeInTheDocument();
+      expect(screen.getByText("0")).toBeInTheDocument();
+    });
+  });
+
+  it("shows sin dato for metrics when values are null", async () => {
+    (globalThis.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: () =>
+        Promise.resolve({
+          status: "passed",
+          sonarProjectKey: "ComfandiTD_afiliaciones",
+          projectName: "Afiliaciones",
+          coverage: null,
+          bugs: null,
+          vulnerabilities: null
+        })
+    });
+
+    render(<SonarIntegrationCard projectId="afiliaciones" projectName="Afiliaciones" />);
+
+    await waitFor(() => {
+      const sinDato = screen.getAllByText("sin dato");
+      expect(sinDato.length).toBeGreaterThanOrEqual(3);
+    });
+  });
 });
