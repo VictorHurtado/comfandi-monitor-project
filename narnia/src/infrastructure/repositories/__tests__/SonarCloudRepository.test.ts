@@ -25,7 +25,7 @@ describe("SonarCloudRepository", () => {
       status: "unknown",
       sonarProjectKey: "ComfandiTD_test",
       projectName: "",
-      message: "Sonar no disponible",
+      message: "No se pudo conectar con Sonar",
       coverage: null,
       bugs: null,
       vulnerabilities: null
@@ -43,7 +43,7 @@ describe("SonarCloudRepository", () => {
     const result = await repo.getQualityGate("ComfandiTD_test");
 
     expect(result.status).toBe("unknown");
-    expect(result.message).toBe("Sonar no disponible");
+    expect(result.message).toBe("No se pudo conectar con Sonar");
     expect(result.coverage).toBeNull();
     expect(result.bugs).toBeNull();
     expect(result.vulnerabilities).toBeNull();
@@ -63,7 +63,7 @@ describe("SonarCloudRepository", () => {
       status: "unknown",
       sonarProjectKey: "ComfandiTD_test",
       projectName: "",
-      message: "Sonar no disponible",
+      message: "No se pudo conectar con Sonar",
       coverage: null,
       bugs: null,
       vulnerabilities: null

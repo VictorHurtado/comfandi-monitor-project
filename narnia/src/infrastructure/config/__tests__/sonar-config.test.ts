@@ -72,4 +72,22 @@ describe("sonar-config", () => {
 
     expect(isSonarConfigured(config)).toBe(false);
   });
+
+  it("returns cacheTtlMinutes default 5 when not set", async () => {
+    delete process.env.SONAR_CACHE_TTL_MINUTES;
+
+    const { getSonarConfig } = await import("../sonar-config");
+    const config = getSonarConfig();
+
+    expect(config.cacheTtlMinutes).toBe(5);
+  });
+
+  it("parses SONAR_CACHE_TTL_MINUTES from env", async () => {
+    process.env.SONAR_CACHE_TTL_MINUTES = "10";
+
+    const { getSonarConfig } = await import("../sonar-config");
+    const config = getSonarConfig();
+
+    expect(config.cacheTtlMinutes).toBe(10);
+  });
 });

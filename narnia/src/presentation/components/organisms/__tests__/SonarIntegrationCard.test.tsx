@@ -69,13 +69,13 @@ describe("SonarIntegrationCard", () => {
     });
   });
 
-  it("shows Sonar no disponible when fetch fails", async () => {
+  it("shows No se pudo conectar con Sonar when fetch fails", async () => {
     (globalThis.fetch as jest.Mock).mockResolvedValue({ ok: false });
 
     render(<SonarIntegrationCard projectId="afiliaciones" projectName="Afiliaciones" />);
 
     await waitFor(() => {
-      expect(screen.getByText("Sonar no disponible")).toBeInTheDocument();
+      expect(screen.getByText("No se pudo conectar con Sonar")).toBeInTheDocument();
     });
   });
 
@@ -99,6 +99,26 @@ describe("SonarIntegrationCard", () => {
       expect(screen.getByText("83%")).toBeInTheDocument();
       expect(screen.getByText("3")).toBeInTheDocument();
       expect(screen.getByText("0")).toBeInTheDocument();
+    });
+  });
+
+  it("shows Actualizado hace X min when fetchedAt is present", async () => {
+    const fetchedAt = new Date(Date.now() - 2 * 60 * 1000).toISOString();
+    (globalThis.fetch as jest.Mock).mockResolvedValue({
+      ok: true,
+      json: () =>
+        Promise.resolve({
+          status: "passed",
+          sonarProjectKey: "ComfandiTD_afiliaciones",
+          projectName: "Afiliaciones",
+          fetchedAt
+        })
+    });
+
+    render(<SonarIntegrationCard projectId="afiliaciones" projectName="Afiliaciones" />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Actualizado hace 2 min/)).toBeInTheDocument();
     });
   });
 
