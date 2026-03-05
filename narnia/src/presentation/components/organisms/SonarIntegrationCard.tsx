@@ -37,10 +37,15 @@ export function SonarIntegrationCard({ projectId, projectName }: SonarIntegratio
 
   useEffect(() => {
     let cancelled = false;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
     async function fetchSonarStatus() {
       try {
-        const res = await fetch(`/api/v1/projects/${encodeURIComponent(projectId)}/integrations/sonar`);
+        const res = await fetch(
+          `/api/v1/projects/${encodeURIComponent(projectId)}/integrations/sonar`,
+          { signal: controller.signal }
+        );
         if (cancelled) return;
         if (res.ok) {
           const json = (await res.json()) as SonarQualityGateResult;
@@ -50,7 +55,7 @@ export function SonarIntegrationCard({ projectId, projectName }: SonarIntegratio
             status: "unknown",
             sonarProjectKey: "",
             projectName,
-            message: "Sonar no disponible"
+            message: "No se pudo conectar con Sonar"
           });
         }
       } catch {
@@ -59,10 +64,11 @@ export function SonarIntegrationCard({ projectId, projectName }: SonarIntegratio
             status: "unknown",
             sonarProjectKey: "",
             projectName,
-            message: "Sonar no disponible"
+            message: "No se pudo conectar con Sonar"
           });
         }
       } finally {
+        clearTimeout(timeoutId);
         if (!cancelled) setLoading(false);
       }
     }
@@ -70,6 +76,7 @@ export function SonarIntegrationCard({ projectId, projectName }: SonarIntegratio
     fetchSonarStatus();
     return () => {
       cancelled = true;
+      controller.abort();
     };
   }, [projectId, projectName]);
 
@@ -109,6 +116,16 @@ export function SonarIntegrationCard({ projectId, projectName }: SonarIntegratio
           </div>
         ) : (
           <>
+            {data?.fetchedAt && (
+              <p className="text-caption text-slate-500">
+                Actualizado hace{" "}
+                {Math.max(
+                  0,
+                  Math.round((Date.now() - new Date(data.fetchedAt).getTime()) / 60000)
+                )}{" "}
+                min
+              </p>
+            )}
             <div className="flex items-center justify-between rounded-input border border-slate-700 p-3">
               <span className="text-caption text-slate-500">Quality Gate</span>
               <span

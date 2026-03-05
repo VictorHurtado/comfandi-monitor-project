@@ -13,7 +13,7 @@ export interface SonarQualityGateResult {
   sonarProjectKey: string;
   /** Nombre legible del proyecto para la UI */
   projectName: string;
-  /** Mensaje amigable cuando hay degradación (ej. "Sonar no disponible") */
+  /** Mensaje amigable cuando hay degradación (ej. "No se pudo conectar con Sonar") */
   message?: string;
   /** Coverage en porcentaje (0-100) o null si no disponible */
   coverage?: number | null;
@@ -21,4 +21,6 @@ export interface SonarQualityGateResult {
   bugs?: number | null;
   /** Cantidad de vulnerabilidades o null si no disponible */
   vulnerabilities?: number | null;
+  /** Timestamp ISO de cuándo se obtuvieron los datos (para indicador de antigüedad) */
+  fetchedAt?: string;
 }

@@ -4,6 +4,14 @@ Documento de apoyo para validar la implementación de SonarQube en el dashboard.
 
 ---
 
+## Política de actualización (HU-009)
+
+- Los datos se consideran **actualizados recientemente** si se obtuvieron dentro del TTL de caché (por defecto 5 minutos, configurable con `SONAR_CACHE_TTL_MINUTES`).
+- En cada visita al dashboard o al refrescar la página, se consultan los datos. Si el caché está vigente, se devuelven los datos cacheados (más rápido).
+- La tarjeta muestra "Actualizado hace X min" cuando hay datos válidos.
+
+---
+
 ## Prerequisitos
 
 - Proyecto **afiliaciones** seleccionado en `/project-selector`.
@@ -72,7 +80,7 @@ Documento de apoyo para validar la implementación de SonarQube en el dashboard.
 **Resultado esperado:**
 
 - La tarjeta se muestra (no hay error de pantalla completa).
-- Mensaje breve y no técnico (ej. "Sonar no disponible" o "No se pudo conectar con Sonar").
+- Mensaje breve y no técnico: **"No se pudo conectar con Sonar"**.
 - No se muestran códigos HTTP, stack traces ni mensajes de API.
 - El resto del dashboard (otras tarjetas) sigue funcionando.
 
