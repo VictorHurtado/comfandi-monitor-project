@@ -15,6 +15,18 @@ SonarQube para mostrar salud de calidad en dashboard general.
 
 ---
 
+## Variables de entorno (SonarQube)
+
+Agregar en `narnia/.env` (token sin comillas):
+
+```env
+SONAR_BASE_URL=https://sonarcloud.io
+SONAR_TOKEN=<SONAR_TOKEN>
+SONAR_PROJECT_KEY_MAP={"afiliaciones":"ComfandiTD_sucursal-afiliaciones"}
+```
+
+---
+
 ## HUs técnicas (refinadas)
 
 Las historias de negocio se refinaron en las siguientes HUs técnicas para implementación por agentes:

@@ -15,6 +15,19 @@ Jira para seguimiento operativo y flujo de trabajo en dashboard general.
 
 ---
 
+## Variables de entorno (Jira)
+
+Agregar en `narnia/.env` (token sin comillas):
+
+```env
+JIRA_BASE_URL=https://comfanditi.atlassian.net
+EMAIL_API_JIRA=1005964681@comfandi.com.co
+TOKEN_API_JIRA=<JIRA_API_TOKEN>
+JIRA_PROJECT_KEY_MAP={"afiliaciones":"PSA"}
+```
+
+---
+
 ## Historia 1 (borrador sin refinar)
 
 ### Criterios de aceptacion
