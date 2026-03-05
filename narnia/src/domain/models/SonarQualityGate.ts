@@ -15,4 +15,10 @@ export interface SonarQualityGateResult {
   projectName: string;
   /** Mensaje amigable cuando hay degradación (ej. "Sonar no disponible") */
   message?: string;
+  /** Coverage en porcentaje (0-100) o null si no disponible */
+  coverage?: number | null;
+  /** Cantidad de bugs o null si no disponible */
+  bugs?: number | null;
+  /** Cantidad de vulnerabilidades o null si no disponible */
+  vulnerabilities?: number | null;
 }
