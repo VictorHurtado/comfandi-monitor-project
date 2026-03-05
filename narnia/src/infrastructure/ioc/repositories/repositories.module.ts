@@ -1,5 +1,9 @@
 import { ContainerModule } from "inversify";
+import type { IProjectKeyResolver } from "@/domain/repositories/IProjectKeyResolver";
+import type { ISonarRepository } from "@/domain/repositories/ISonarRepository";
 import type { IStatusRepository } from "@/domain/repositories/IStatusRepository";
+import { SonarCloudRepository } from "@/infrastructure/repositories/SonarCloudRepository";
+import { SonarProjectKeyResolver } from "@/infrastructure/repositories/SonarProjectKeyResolver";
 import { StatusRepository } from "@/infrastructure/repositories/StatusRepository";
 import { ExternalApiService } from "@/infrastructure/services/ExternalApiService";
 import { KeycloakService } from "@/infrastructure/services/KeycloakService";
@@ -15,5 +19,13 @@ export const repositoriesModule = new ContainerModule(({ bind }) => {
           context.get<KeycloakService>(SERVICE_TYPES.KeycloakService)
         )
     )
+    .inSingletonScope();
+
+  bind<ISonarRepository>(REPOSITORY_TYPES.ISonarRepository)
+    .to(SonarCloudRepository)
+    .inSingletonScope();
+
+  bind<IProjectKeyResolver>(REPOSITORY_TYPES.IProjectKeyResolver)
+    .to(SonarProjectKeyResolver)
     .inSingletonScope();
 });

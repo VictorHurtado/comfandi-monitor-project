@@ -15,6 +15,19 @@ GitHub para actividad de desarrollo en dashboard general.
 
 ---
 
+## Variables de entorno (GitHub)
+
+Agregar en `narnia/.env`:
+
+```env
+GITHUB_BASE_URL=https://api.github.com
+GITHUB_TOKEN=<GITHUB_TOKEN>
+GITHUB_REPO_MAP={"afiliaciones":"ComfandiTD/sucursal-afiliaciones"}
+GITHUB_TIME_WINDOW_DAYS=7
+```
+
+---
+
 ## Historia 1 (borrador sin refinar)
 
 ### Criterios de aceptacion

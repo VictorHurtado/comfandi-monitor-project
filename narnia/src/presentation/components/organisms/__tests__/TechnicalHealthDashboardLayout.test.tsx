@@ -15,7 +15,7 @@ describe("TechnicalHealthDashboardLayout", () => {
     expect(screen.getByText("GitHub")).toBeInTheDocument();
     expect(screen.getByText("Jira")).toBeInTheDocument();
     expect(screen.getByText("Proteo")).toBeInTheDocument();
-    expect(screen.getAllByText("Sin métricas conectadas")).toHaveLength(4);
+    expect(screen.getAllByText("Sin métricas conectadas")).toHaveLength(3);
     expect(screen.getByText("Sin alertas integradas")).toBeInTheDocument();
 
     fireEvent.click(screen.getByLabelText("Colapsar sidebar"));
